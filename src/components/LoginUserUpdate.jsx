@@ -5,6 +5,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { useSelector } from "react-redux";
+import apiClient from "../api/axios";
 
 export default function LoginUserUpdate() {
   // Controlled inputs so we can clear them reliably
@@ -19,7 +20,7 @@ export default function LoginUserUpdate() {
   // Mutation returns the axios promise (critical!)
   const updateMutation = useMutation({
     mutationFn: ({ id, password }) =>
-      axios.put(`/api/agents/${id}`, { password }),
+      apiClient.put(`/api/agents/${id}`, { password }),
 
     onSuccess: (response) => {
       notifications.show({

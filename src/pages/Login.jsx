@@ -6,9 +6,10 @@ import { notifications } from "@mantine/notifications";
 import { useDispatch } from "react-redux";
 import { login as authLogin } from "../store/authSlice";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../api/axios";
 
 const loginUser = async ({ email, password }) => {
-  const response = await axios.post("/api/login", { email, password });
+  const response = await apiClient.post("/api/login", { email, password });
   return response.data;
 };
 

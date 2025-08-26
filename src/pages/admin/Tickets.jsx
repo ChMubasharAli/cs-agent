@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import { RxCheck, RxCross2 } from "react-icons/rx";
+import apiClient from "../../api/axios";
 
 export default function Tickets({ apiKey = "/api/tickets" }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -26,7 +27,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   } = useQuery({
     queryKey: ["tickets"],
     queryFn: () => {
-      return axios.get(apiKey).then((response) => response.data);
+      return apiClient.get(apiKey).then((response) => response.data);
     },
   });
 
@@ -38,7 +39,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   } = useQuery({
     queryKey: ["agents"],
     queryFn: () => {
-      return axios.get("/api/agents").then((response) => response.data);
+      return apiClient.get("/api/agents").then((response) => response.data);
     },
   });
 
@@ -46,7 +47,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   const transferTicketMutation = useMutation({
     mutationFn: ({ ticketId, agentId }) => {
       console.log("Transferring ticket:", ticketId, "to agent:", agentId);
-      return axios.patch(`/api/tickets/${ticketId}/assign/${agentId}`);
+      return apiClient.patch(`/api/tickets/${ticketId}/assign/${agentId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tickets"]); // Refetch agents after success
@@ -78,7 +79,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   // Update Ticket stuts usign TanStack Query
   const ticketStatusMutation = useMutation({
     mutationFn: ({ ticketId, status }) => {
-      return axios.patch(`/api/tickets/${ticketId}/status`, { status });
+      return apiClient.patch(`/api/tickets/${ticketId}/status`, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tickets"]); // Refetch agents after success
@@ -111,7 +112,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   // Update Ticket Priority using TanStack Query
   const ticketPriorityMutation = useMutation({
     mutationFn: ({ ticketId, priority }) => {
-      return axios.patch(`/api/tickets/${ticketId}/piority`, {
+      return apiClient.patch(`/api/tickets/${ticketId}/piority`, {
         priority,
       });
     },

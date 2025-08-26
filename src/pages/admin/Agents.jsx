@@ -16,13 +16,14 @@ import {
 import { RxCross2, RxCheck } from "react-icons/rx";
 import { LoaderComp } from "../../components";
 import { notifications } from "@mantine/notifications";
+import apiClient from "../../api/axios";
 
 // API functions using Axios
 
 // Fetch all agents from the database
 const fetchAgents = async () => {
   try {
-    const response = await axios.get(`/api/agents`);
+    const response = await apiClient.get(`/api/agents`);
     // Ensure the response data is an array
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
@@ -33,19 +34,19 @@ const fetchAgents = async () => {
 
 // Create a new agent
 const createAgent = async (agentData) => {
-  const response = await axios.post(`/api/agents`, agentData);
+  const response = await apiClient.post(`/api/agents`, agentData);
   return response.data;
 };
 
 // Update an existing agent
 const updateAgent = async ({ id, agentData }) => {
-  const response = await axios.put(`/api/agents/${id}`, agentData);
+  const response = await apiClient.put(`/api/agents/${id}`, agentData);
   return response.data;
 };
 
 // Delete an agent
 const deleteAgent = async (id) => {
-  const response = await axios.delete(`/api/agents/${id}`);
+  const response = await apiClient.delete(`/api/agents/${id}`);
   return response.data;
 };
 
