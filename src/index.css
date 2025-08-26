@@ -1,0 +1,41 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+
+html,
+body {
+  font-family: "Roboto", sans-serif !important;
+}
+
+@theme {
+  --color-primary: #14b8a6; /* Blue-600 — bold, professional */
+  --color-primary-hover: #00897b; /* Blue-700 — slightly darker hover */
+
+  --color-secondary: #3b82f6; /* Teal-500 — fresh, modern */
+  --color-secondary-hover: #2563eb; /* Teal-600 — deeper hover */
+
+  --color-accent: #ef4444; /* Orange-500 — warm attention grabber */
+  --color-accent-hover: #dc2626; /* Orange-600 — richer hover */
+
+  --color-background: #f9fafb; /* Gray-50 — clean, light background */
+}
+
+/* Style entire scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* thickness */
+}
+
+/* Track (background area) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* light gray */
+}
+
+/* Thumb (scroll handle) */
+::-webkit-scrollbar-thumb {
+  background: #14b8a6; /* darker gray */
+  border-radius: 5px; /* rounded edges */
+}
+
+/* Thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0d9488; /* even darker */
+}
