@@ -167,6 +167,7 @@ const Agents = () => {
         position: "top-right",
         icon: <RxCheck size={18} />,
         color: "green",
+        position: "top-right",
         autoClose: 4000,
       });
     },
@@ -368,7 +369,7 @@ const Agents = () => {
         title={modalMode === "create" ? "Create Agent" : "Update Agent"}
         size="md"
         classNames={{
-          title: "text-primary !text-xl !font-semibold",
+          title: "text-heading !text-xl !font-semibold",
           close: "hover:!text-primary !border-none !outline-primary",
         }}
         centered
@@ -467,7 +468,7 @@ const Agents = () => {
         centered
         radius="lg"
         classNames={{
-          title: "text-primary !text-xl !font-semibold",
+          title: "text-heading !text-xl !font-semibold",
           close: "hover:!text-primary",
         }}
       >

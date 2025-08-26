@@ -24,8 +24,9 @@ const LoginPage = () => {
       notifications.show({
         title: "Success",
         message: "You have successfully logged in!",
-        color: "#0ea5e9", // primary
-        autoClose: 3000,
+        color: "green", // primary
+        position: "top-right",
+        autoClose: 4000,
       });
 
       const userData = data.agent;
@@ -40,8 +41,9 @@ const LoginPage = () => {
       notifications.show({
         title: "Error",
         message: error.response?.data?.message || "Invalid email or password",
-        color: "#f43f5e", // accent
-        autoClose: 5000,
+        color: "red", // accent
+        position: "top-right",
+        autoClose: 4000,
       });
     },
   });
@@ -70,7 +72,7 @@ const LoginPage = () => {
           ta={"center"}
           fw={"bold"}
           fz={"h1"}
-          classNames={{ root: "!text-primary" }}
+          classNames={{ root: "!text-heading !text-shadow-lg" }}
         >
           Welcome Back
         </Text>

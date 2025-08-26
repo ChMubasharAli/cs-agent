@@ -76,7 +76,7 @@ export default function LoginUserUpdate() {
         color: "red",
         icon: <RxCross2 size={18} />,
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 4000,
       });
       return;
     }

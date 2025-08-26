@@ -92,7 +92,7 @@ export default function DisplayTickets({
       <section className="w-80 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         {selectedTicket ? (
           <div className="h-full flex flex-col">
-            <div className="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-primary to-primary-hover px-6 py-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-white">
                   Ticket Status
@@ -126,10 +126,16 @@ export default function DisplayTickets({
                         {selectedTicket?.User?.name || "N/A"}
                       </span>
                     </p>
-                    <p className="text-xs font-medium text-gray-900 tracking-wider">
+                    <p className="text-xs mb-1 font-medium text-gray-900 tracking-wider">
                       Email:{" "}
                       <span className="font-normal text-xs">
                         {selectedTicket?.User?.email || "N/A"}
+                      </span>
+                    </p>
+                    <p className="text-xs font-medium text-gray-900 tracking-wider">
+                      Phone:{" "}
+                      <span className="font-normal text-xs">
+                        {selectedTicket?.User?.phone || "5677722608"}
                       </span>
                     </p>
                   </div>
@@ -160,7 +166,7 @@ export default function DisplayTickets({
                   <p className="text-xs mb-2 font-medium text-primary uppercase tracking-wide">
                     Rating
                   </p>
-                  <Rating defaultValue={selectedTicket.rating || 3} />
+                  <Rating readOnly defaultValue={selectedTicket.rating} />
                 </div>
               </div>
 
@@ -223,7 +229,7 @@ export default function DisplayTickets({
               </div>
             </div>
 
-            <div className="border-t border-gray-200 p-4 bg-gray-50">
+            <div className="border-t flex gap-2 border-gray-200 p-4 bg-gray-50">
               <Button
                 radius="md"
                 size="sm"
@@ -232,6 +238,14 @@ export default function DisplayTickets({
                 classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
               >
                 Update Ticket
+              </Button>
+              <Button
+                radius="md"
+                size="sm"
+                fullWidth
+                classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
+              >
+                View
               </Button>
             </div>
           </div>

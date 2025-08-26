@@ -8,6 +8,8 @@ import { useDisclosure } from "@mantine/hooks";
 import LoginUserUpdate from "./LoginUserUpdate";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import logo from "../assets/logo.jpg";
+import { notifications } from "@mantine/notifications";
 
 export function Sidebar({
   isOpen,
@@ -131,8 +133,8 @@ export function Sidebar({
       </div>
       {/* Desktop Version */}
       <div className="w-64 backdrop-blur-xl bg-white md:flex hidden flex-col rounded-tr-2xl rounded-br-2xl shadow-lg relative z-10">
-        <div className="p-6 border-b border-primary/20 flex-shrink-0">
-          <h1 className="text-2xl font-bold text-primary">{label}</h1>
+        <div className="p-3  border-b border-primary/20   ">
+          <img src={logo} alt="logo" className="h-full w-full object-contain" />
         </div>
 
         <nav className="flex-1 px-4 py-4 overflow-y-auto">
@@ -151,8 +153,8 @@ export function Sidebar({
                     <div
                       className={`w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 group ${
                         isActive
-                          ? "bg-primary/20 text-primary border border-primary/30"
-                          : "text-gray-600 hover:bg-primary/20 hover:text-gray-800"
+                          ? "bg-primary/20 text-heading border border-primary/30"
+                          : "text-gray-600 hover:bg-primary/20 hover:text-heading"
                       }`}
                     >
                       <div className="mr-3">
@@ -160,16 +162,16 @@ export function Sidebar({
                           size={20}
                           className={
                             isActive
-                              ? "text-primary"
-                              : "text-gray-500 group-hover:text-primary"
+                              ? "text-heading"
+                              : "text-gray-500 group-hover:text-heading"
                           }
                         />
                       </div>
                       <span
                         className={
                           isActive
-                            ? "text-primary"
-                            : "text-gray-500 group-hover:text-primary"
+                            ? "text-heading font-semibold"
+                            : "text-gray-500 group-hover:text-heading "
                         }
                       >
                         {item.name}
@@ -195,7 +197,7 @@ export function Sidebar({
               {userData.lastName.charAt(0).toUpperCase()}
             </Avatar>
             <div className="flex-1 min-w-0 ">
-              <div className="text-gray-800 capitalize font-semibold text-xs">
+              <div className="text-heading capitalize font-semibold text-xs">
                 {userData?.firstName || "Admin"} {userData?.lastName}
               </div>
               <div className="text-gray-500 text-xs truncate">
@@ -218,7 +220,7 @@ export function Sidebar({
         title={modalTitle}
         radius="lg"
         classNames={{
-          title: "text-primary !text-xl !font-semibold",
+          title: "text-heading !text-xl !font-semibold",
           close: "hover:!text-primary !border-none !outline-primary",
         }}
       >
@@ -249,6 +251,13 @@ export function Sidebar({
                 onClick={() => {
                   dispatch(logout());
                   queryClient.clear();
+                  notifications.show({
+                    title: "Success",
+                    message: "You have been logged out successfully",
+                    color: "green",
+                    position: "top-right",
+                    autoClose: 4000,
+                  });
                 }}
               >
                 Logout

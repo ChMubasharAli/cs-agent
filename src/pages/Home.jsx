@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary via-background to-secondary text-center px-4">
       {/* Main Heading */}
-      <h1 className="text-4xl sm:text-6xl text-shadow-lg lg:text-7xl font-extrabold text-primary drop-shadow-md">
+      <h1 className="text-4xl sm:text-6xl text-shadow-lg lg:text-7xl font-extrabold text-heading drop-shadow-md">
         Welcome to Customer Support
       </h1>
 

@@ -178,7 +178,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
         overlayProps={{ opacity: 1 }}
         title="Update Ticket"
         classNames={{
-          title: "text-primary !text-xl !font-semibold",
+          title: "text-heading !text-xl !font-semibold",
           close: "hover:!text-primary !border-none !outline-primary",
         }}
         radius="lg"
@@ -196,7 +196,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
             <Title
               my={"md"}
               ta={"center"}
-              classNames={{ root: "!text-primary" }}
+              classNames={{ root: "!text-heading" }}
               order={3}
             >
               Transfer Your Ticket
@@ -240,7 +240,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
             <Title
               my={"md"}
               ta={"center"}
-              classNames={{ root: "!text-primary" }}
+              classNames={{ root: "!text-heading" }}
               order={3}
             >
               Update Ticket Status
@@ -282,7 +282,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
             <Title
               my={"md"}
               ta={"center"}
-              classNames={{ root: "!text-primary" }}
+              classNames={{ root: "!text-heading" }}
               order={3}
             >
               Update Ticket Priority
