@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { FaPencilAlt, FaTrashAlt, FaPlusCircle } from "react-icons/fa";
-import axios from "axios";
 import {
   Modal,
   TextInput,
@@ -71,9 +70,6 @@ const Agents = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletingAgentId, setDeletingAgentId] = useState(null);
 
-  // State for mutation error message (for create/edit modal)
-  const [mutationError, setMutationError] = useState(null);
-
   // Initial form data
   const initialFormData = {
     firstName: "",
@@ -100,7 +96,7 @@ const Agents = () => {
       queryClient.invalidateQueries(["agents"]); // Refetch agents after success
       setIsModalOpen(false); // Close modal
       setFormData(initialFormData); // Reset form
-      setMutationError(null); // Clear any previous error
+
       // Show success notification
       notifications.show({
         title: "Success",
@@ -111,7 +107,7 @@ const Agents = () => {
         autoClose: 4000,
       });
     },
-    onError: (error) => {
+    onError: () => {
       notifications.show({
         title: "Error",
         message: "Failed to create agent. Please try again.",
@@ -130,7 +126,6 @@ const Agents = () => {
       queryClient.invalidateQueries(["agents"]); // Refetch agents after success
       setIsModalOpen(false); // Close modal
       setFormData(initialFormData); // Reset form
-      setMutationError(null); // Clear any previous error
       // Show success notification
       notifications.show({
         title: "Success",
@@ -141,7 +136,7 @@ const Agents = () => {
         autoClose: 4000,
       });
     },
-    onError: (error) => {
+    onError: () => {
       notifications.show({
         title: "Error",
         message: "Failed to Update agent. Please try again.",
@@ -167,7 +162,6 @@ const Agents = () => {
         position: "top-right",
         icon: <RxCheck size={18} />,
         color: "green",
-        position: "top-right",
         autoClose: 4000,
       });
     },
@@ -190,7 +184,6 @@ const Agents = () => {
   // Function to open modal in create or edit mode
   const handleOpenModal = (mode = "create", agent = null) => {
     setModalMode(mode);
-    setMutationError(null); // Clear error when opening modal
     if (mode === "edit" && agent) {
       setFormData({
         id: agent.id,
@@ -211,7 +204,6 @@ const Agents = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setFormData(initialFormData);
-    setMutationError(null); // Clear error when closing modal
   };
 
   // Function to open delete confirmation modal

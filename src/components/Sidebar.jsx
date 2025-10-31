@@ -11,13 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import logo from "../assets/logo.jpg";
 import { notifications } from "@mantine/notifications";
 
-export function Sidebar({
-  isOpen,
-  setIsOpen,
-  menuItems,
-  setActiveItem,
-  label = "add label",
-}) {
+export function Sidebar({ isOpen, setIsOpen, menuItems, setActiveItem }) {
   const userData = useSelector((state) => state.auth.userData);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
@@ -134,7 +128,11 @@ export function Sidebar({
       {/* Desktop Version */}
       <div className="w-64 backdrop-blur-xl bg-white md:flex hidden flex-col rounded-tr-2xl rounded-br-2xl shadow-lg relative z-10">
         <div className="p-3  border-b border-primary/20   ">
-          <img src={logo} alt="logo" className="h-full w-full object-contain" />
+          <img
+            src={logo}
+            alt="logo"
+            className="h-full w-[180px] object-contain"
+          />
         </div>
 
         <nav className="flex-1 px-4 py-4 overflow-y-auto">

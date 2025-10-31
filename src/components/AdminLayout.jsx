@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { FaHome, FaTicketAlt, FaUser } from "react-icons/fa";
+import { FaHome, FaTicketAlt, FaUser,  } from "react-icons/fa";
+import {
+  BsFillTelephoneInboundFill,
+  BsFillTelephoneOutboundFill,
+} from "react-icons/bs";
 import { MdSupportAgent } from "react-icons/md";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
@@ -16,6 +20,8 @@ export default function AdminLayout() {
     { name: "Agents", icon: MdSupportAgent, href: "agents" },
     { name: "Tickets", icon: FaTicketAlt, href: "tickets" },
     { name: "Users", icon: FaUser, href: "users" },
+    { name: "Inbound", icon: BsFillTelephoneInboundFill, href: "inbound" },
+    { name: "Outbound", icon: BsFillTelephoneOutboundFill, href: "outbound" },
   ];
 
   return (

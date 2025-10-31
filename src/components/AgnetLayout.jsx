@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaHome, FaUser } from "react-icons/fa";
+import { FaHome, FaUser, FaPhoneVolume } from "react-icons/fa";
 import { LuTickets } from "react-icons/lu";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
@@ -14,7 +14,7 @@ export default function AgentLayout() {
   const menuItems = [
     { name: "Dashboard", icon: FaHome, href: ".", end: true },
     { name: "Tickets", icon: LuTickets, href: "tickets" },
-    { name: "Users", icon: FaUser, href: "users" },
+    { name: "Calls", icon: FaPhoneVolume, href: "calls" },
   ];
 
   return (

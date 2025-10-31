@@ -3,12 +3,15 @@ import { LoaderComp, DisplayTickets } from "../../components";
 import { Button, Modal, Select, Tabs, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+
 import { notifications } from "@mantine/notifications";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import apiClient from "../../api/axios";
 
-export default function Tickets({ apiKey = "/api/tickets" }) {
+export default function Tickets({
+  apiKey = "/api/tickets",
+  route = "/admin/tickets",
+}) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -32,11 +35,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
   });
 
   // Fetch All Agents using TanStack Query
-  const {
-    data: agentsData = [],
-    isLoading: agentsFetchingLoading,
-    error: agentsFetchingError,
-  } = useQuery({
+  const { data: agentsData = [] } = useQuery({
     queryKey: ["agents"],
     queryFn: () => {
       return apiClient.get("/api/agents").then((response) => response.data);
@@ -160,6 +159,7 @@ export default function Tickets({ apiKey = "/api/tickets" }) {
         ) : (
           <section className="h-full bg-white rounded-2xl p-2">
             <DisplayTickets
+              route={route}
               tickets={ticketsData}
               modalOpen={open}
               selectedTicket={selectedTicket}
