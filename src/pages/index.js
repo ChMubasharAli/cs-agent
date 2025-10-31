@@ -7,7 +7,6 @@ import AdminDashboard from "./admin/AdminDashboard";
 import Users from "./admin/Users";
 import AgentDashboard from "./agents/AgentDashboard";
 import AgentTickets from "./agents/AgentTickets";
-import AgentUsers from "./agents/AgentUsers";
 import Tickets from "./admin/Tickets";
 
 export {
@@ -20,6 +19,5 @@ export {
   AgentDashboard,
   AgentTickets,
   Tickets,
-  AgentUsers,
   Users,
 };
