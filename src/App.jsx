@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
   AdminLayout,
   AdminProtectedRoute,
@@ -16,7 +11,6 @@ import {
   AgentDashboard,
   Agents,
   AgentTickets,
-  AgentUsers,
   Home,
   LoginPage,
   NotFoundPage,

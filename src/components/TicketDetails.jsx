@@ -86,7 +86,7 @@ const TicketDetails = () => {
     );
 
   return (
-    <div className="bg-white py-8 shadow-lg rounded-xl border border-gray-200">
+    <div className="bg-white py-8 shadow-lg rounded-xl border border-gray-200 min-h-[85vh] ">
       {/* Main Card */}
       <div className="bg-white container mx-auto  ">
         {/* Header Section */}
@@ -121,7 +121,7 @@ const TicketDetails = () => {
         <div className="p-6">
           <div className="grid lg:grid-cols-3   gap-8">
             {/* Left Column - Main Content */}
-            <div className="lg:col-span-2 flex flex-col justify-center gap-10 space-y-6 ">
+            <div className="lg:col-span-2 flex flex-col  gap-10 space-y-6 ">
               {/* Conversation History */}
               {ticket.Calls && ticket.Calls.length > 0 && (
                 <div className="space-y-4 ">
@@ -131,7 +131,7 @@ const TicketDetails = () => {
                   {ticket.Calls.map((call, index) => (
                     <div
                       key={call.id}
-                      className="bg-gray-50 rounded-lg border border-gray-200 p-4 max-h-[50vh] overflow-y-auto"
+                      className="bg-gray-50 rounded-lg border border-gray-200 p-4 max-h-[350px]  overflow-y-auto"
                     >
                       <div className="flex justify-between items-start mb-3">
                         <span className="text-sm font-medium text-gray-700">
