@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Button, Badge } from "@mantine/core";
 import apiClient from "../api/axios";
 import LoaderComp from "./LoaderComp";
+import Audio from "./Audio";
+// import Audio from "../components/Audio";
 
 const CallDetails = () => {
   const { id } = useParams();
@@ -283,15 +285,7 @@ const CallDetails = () => {
                   Call Recording
                 </h3>
                 <div className="space-y-3">
-                  <div>
-                    <audio controls className="w-full rounded-lg">
-                      <source
-                        src={call?.recordingUrl || ""}
-                        type="audio/mpeg"
-                      />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
+                  <Audio />
                 </div>
               </div>
 

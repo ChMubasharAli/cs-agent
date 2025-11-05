@@ -65,24 +65,22 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
           <table className="min-w-full  divide-y divide-gray-200">
             <thead className="bg-primary sticky top-0 left-0 z-30">
               <tr>
-                {[
-                  "Sr. No",
-                  "User Name",
-                  "Type",
-                  "AI Resolution",
-                  "Recording",
-                ].map((dataVal) => (
-                  <th
-                    key={dataVal}
-                    className={`${
-                      dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
-                    } ${
-                      dataVal === "Recording" ? "rounded-tr-2xl" : "text-left"
-                    } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
-                  >
-                    {dataVal}
-                  </th>
-                ))}
+                {["Sr. No", "User Name", "Type", "AI Resolution"].map(
+                  (dataVal) => (
+                    <th
+                      key={dataVal}
+                      className={`${
+                        dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
+                      } ${
+                        dataVal === "AI Resolution"
+                          ? "rounded-tr-2xl"
+                          : "text-left"
+                      } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
+                    >
+                      {dataVal}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -94,19 +92,19 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   }`}
                   onClick={() => setSelectedCall(call)}
                 >
-                  <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {index + 1}
                   </td>
                   {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
                   {call.userId || "N/A"}
                 </td> */}
-                  <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
-                  <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-600 capitalize w-1/5">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4">
                     {call.type || "N/A"}
                   </td>
-                  <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         call.isResolvedByAi
@@ -116,13 +114,6 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                     >
                       {call.isResolvedByAi ? "Resolved" : "Pending"}
                     </span>
-                  </td>
-
-                  <td className="px-6 py-2 whitespace-nowrap text-sm text-gray-600 capitalize w-1/5">
-                    <audio controls muted className="h-10">
-                      <source src={call.recordingUrl || ""} type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
                   </td>
                 </tr>
               ))}
