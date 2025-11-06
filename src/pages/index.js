@@ -8,6 +8,7 @@ import Users from "./admin/Users";
 import AgentDashboard from "./agents/AgentDashboard";
 import AgentTickets from "./agents/AgentTickets";
 import Tickets from "./admin/Tickets";
+import OutboundCalls from "./admin/OutBoundCalls";
 
 export {
   Agents,
@@ -20,4 +21,5 @@ export {
   AgentTickets,
   Tickets,
   Users,
+  OutboundCalls,
 };

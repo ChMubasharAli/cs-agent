@@ -14,6 +14,7 @@ import {
   Home,
   LoginPage,
   NotFoundPage,
+  OutboundCalls,
   Tickets,
   Unauthorized,
   Users,
@@ -22,7 +23,6 @@ import TicketDetails from "./components/TicketDetails";
 import Calls from "./pages/admin/Calls";
 import CallDetails from "./components/CallsDetails";
 import AgentCalls from "./pages/agents/AgentCalls";
-import OutboundCalls from "./pages/admin/OutBoundCalls";
 
 export default function App() {
   return (
