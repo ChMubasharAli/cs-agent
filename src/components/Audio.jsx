@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import LoaderComp from "./LoaderComp";
 import apiClient from "../api/axios";
 
-export default function Audio({ callId = 14 }) {
+export default function Audio({ callId = "" }) {
   const {
     data: dashboardData,
     isLoading,

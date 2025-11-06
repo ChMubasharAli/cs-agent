@@ -22,6 +22,7 @@ import TicketDetails from "./components/TicketDetails";
 import Calls from "./pages/admin/Calls";
 import CallDetails from "./components/CallsDetails";
 import AgentCalls from "./pages/agents/AgentCalls";
+import OutboundCalls from "./pages/admin/OutBoundCalls";
 
 export default function App() {
   return (
@@ -50,7 +51,10 @@ export default function App() {
             <Route path="tickets/:id" element={<TicketDetails />} />
             <Route path="users" element={<Users />} />
             <Route path="inbound" element={<Calls type="inbound" />} />
-            <Route path="outbound" element={<Calls type="outbound" />} />
+            <Route
+              path="outbound"
+              element={<OutboundCalls type="outbound" />}
+            />
           </Route>
         </Route>
 

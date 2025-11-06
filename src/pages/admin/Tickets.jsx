@@ -252,7 +252,12 @@ export default function Tickets({
                 label="Select Status"
                 value={selectedStatus}
                 onChange={setSelectedStatus}
-                data={["open", "in_progress", "resolved", "closed"]}
+                data={[
+                  { value: "open", label: "Open" },
+                  { value: "in_progress", label: "In Progress" },
+                  { value: "resolved", label: "Resolved" },
+                  { value: "closed", label: "Closed" },
+                ]}
                 radius={"md"}
                 placeholder="Select status"
               />
@@ -292,9 +297,14 @@ export default function Tickets({
               <Select
                 value={selectedPriority}
                 onChange={setSelectedPrority}
+                data={[
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
+                  { value: "critical", label: "Critical" },
+                ]}
                 classNames={{ root: "!w-full", label: "mb-1" }}
                 label="Select Priority"
-                data={["low", "medium", "high", "critical"]}
                 radius={"md"}
                 placeholder="Select Priority"
               />

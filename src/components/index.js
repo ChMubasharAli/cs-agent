@@ -10,6 +10,7 @@ import {
   AgentProtectedRoute,
   LoginProtectedRoute,
 } from "./ProtectedRoute";
+import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
 
 export {
   AdminLayout,
@@ -22,4 +23,5 @@ export {
   AdminProtectedRoute,
   AgentProtectedRoute,
   LoginProtectedRoute,
+  CustomerSatisfactionToggler,
 };

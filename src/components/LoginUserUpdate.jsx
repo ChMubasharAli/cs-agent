@@ -1,7 +1,6 @@
 import { Button, PasswordInput } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import React, { useState } from "react";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import { useSelector } from "react-redux";

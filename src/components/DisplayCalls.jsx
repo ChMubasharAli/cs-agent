@@ -7,6 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { FaTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
+import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
 
 export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
   const queryClient = useQueryClient();
@@ -102,7 +103,8 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4">
-                    {call.type || "N/A"}
+                    {call.type}
+                    {call.callCategory ? ` - ${call.callCategory}` : ""}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     <span
@@ -210,6 +212,19 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                         </div>
                       </div>
                     )}
+                </div>
+
+                {/* Call Summary */}
+
+                <div>
+                  <h4 className="text-sm font-semibold text-primary mb-2 flex items-center">
+                    User Satisfaction
+                  </h4>
+
+                  <CustomerSatisfactionToggler
+                    callId={selectedCall.id}
+                    initialSatisfied={selectedCall.customerSatisfied}
+                  />
                 </div>
 
                 {/* Timestamps */}

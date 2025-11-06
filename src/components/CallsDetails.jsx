@@ -5,6 +5,7 @@ import { Button, Badge } from "@mantine/core";
 import apiClient from "../api/axios";
 import LoaderComp from "./LoaderComp";
 import Audio from "./Audio";
+import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
 // import Audio from "../components/Audio";
 
 const CallDetails = () => {
@@ -23,23 +24,6 @@ const CallDetails = () => {
       apiClient.get(`/api/call/${id}`).then((res) => res.data.data),
     enabled: !!id,
   });
-
-  const getCallTypeColor = (type) => {
-    switch (type?.toLowerCase()) {
-      case "inbound":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "outbound":
-        return "bg-green-100 text-green-800 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getAIResolutionColor = (isResolved) => {
-    return isResolved
-      ? "bg-green-100 text-green-800 border-green-200"
-      : "bg-yellow-100 text-yellow-800 border-yellow-200";
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -81,7 +65,7 @@ const CallDetails = () => {
     );
 
   return (
-    <div className="  bg-white bgwhite py-8 shadow-lg rounded-xl border border-gray-200">
+    <div className="  bg-white bgwhite py-8 shadow-lg rounded-xl shadow-md">
       {/* Header with Back Button */}
 
       {/* Main Card */}
@@ -97,23 +81,13 @@ const CallDetails = () => {
                 Complete call details and conversation transcript
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 mt-4 md:mt-0">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold border ${getCallTypeColor(
-                  call.type
-                )}`}
-              >
-                {call.type?.toUpperCase() || "UNKNOWN"} CALL
-              </span>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold border ${getAIResolutionColor(
-                  call.isResolvedByAi
-                )}`}
-              >
-                {call.isResolvedByAi
-                  ? "✅ AI RESOLVED"
-                  : "🔄 PENDING RESOLUTION"}
-              </span>
+            <div className="max-w-xs w-full">
+              <CustomerSatisfactionToggler
+                callId={call.id}
+                initialSatisfied={call.customerSatisfied}
+                switchSize="xl"
+                textSize="base"
+              />
             </div>
           </div>
         </div>
@@ -122,7 +96,7 @@ const CallDetails = () => {
         <div className="p-6">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left Column - Main Content */}
-            <div className="lg:col-span-2 space-y-6  flex flex-col gap-10">
+            <div className="lg:col-span-2   flex flex-col gap-10">
               {/* Conversation Transcript */}
               {call.QuestionsAnswers && call.QuestionsAnswers.length > 0 && (
                 <div className="space-y-4">
@@ -145,7 +119,7 @@ const CallDetails = () => {
                       {call.QuestionsAnswers.length} exchanges
                     </span>
                   </h2>
-                  <div className="space-y-3 shadow-md p-2 rounded-md max-h-[60vh] overflow-y-auto">
+                  <div className="space-y-3 shadow-md p-2 rounded-md min-h-96 max-h-96 overflow-y-auto">
                     {call.QuestionsAnswers.map((qa, qaIndex) => (
                       <div key={qaIndex} className="space-y-2">
                         {qa.q && (
@@ -181,7 +155,7 @@ const CallDetails = () => {
               )}
 
               {/* Call Summary */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white shadow-md rounded-lg p-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                   <svg
                     className="w-5 h-5 text-gray-600 mr-2"
@@ -238,7 +212,7 @@ const CallDetails = () => {
               {/* No Transcript State */}
               {(!call.QuestionsAnswers ||
                 call.QuestionsAnswers.length === 0) && (
-                <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+                <div className="bg-white shadow-md rounded-lg p-6 text-center">
                   <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                     <svg
                       className="w-6 h-6 text-gray-400"
@@ -265,9 +239,9 @@ const CallDetails = () => {
             </div>
 
             {/* Right Column - Sidebar */}
-            <div className="space-y-6">
+            <div className="flex flex-col justify-between">
               {/* Call Recording */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-white shadow-md rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                   <svg
                     className="w-5 h-5 text-gray-600 mr-2"
@@ -289,125 +263,9 @@ const CallDetails = () => {
                 </div>
               </div>
 
-              {/* Customer Information */}
-              {call.userId && (
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                    <svg
-                      className="w-5 h-5 text-gray-600 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    Customer Information
-                  </h3>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-medium text-gray-500">Name</p>
-                      <p className="text-sm text-gray-900">
-                        {call.userId.name || "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500">Email</p>
-                      <p className="text-sm text-gray-900 break-all">
-                        {call.userId.email || "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-gray-500">Phone</p>
-                      <p className="text-sm text-gray-900">
-                        {call.userId.phone || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Call Information */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                  <svg
-                    className="w-5 h-5 text-gray-600 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    />
-                  </svg>
-                  Call Details
-                </h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs font-medium text-gray-500">Type</p>
-                    <p className="text-sm text-gray-900 capitalize">
-                      {call.type || "Unknown"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-500">
-                      AI Resolution
-                    </p>
-                    <p className="text-sm text-gray-900">
-                      {call.isResolvedByAi ? (
-                        <span className="text-green-600 flex items-center">
-                          <svg
-                            className="w-4 h-4 mr-1"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          Resolved by AI
-                        </span>
-                      ) : (
-                        <span className="text-yellow-600 flex items-center">
-                          <svg
-                            className="w-4 h-4 mr-1"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          Pending Resolution
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-500">
-                      Ticket ID
-                    </p>
-                    <p className="text-sm text-gray-900">
-                      {call.ticketId || "Not Linked"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Languages */}
               {call.languages && call.languages.length > 0 && (
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="bg-white shadow-md rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <svg
                       className="w-5 h-5 text-green-600 mr-2"
@@ -438,7 +296,7 @@ const CallDetails = () => {
               )}
 
               {/* Timeline Information */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="bg-green-50 shadow-md rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                   <svg
                     className="w-5 h-5 text-gray-600 mr-2"
@@ -474,6 +332,123 @@ const CallDetails = () => {
               </div>
             </div>
           </div>
+          <section className="grid grid-cols-1 gap-6 mt-8  lg:grid-cols-2">
+            {/* Customer Information */}
+            {call.userId && (
+              <div className="bg-blue-50 shadow-md rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  <svg
+                    className="w-5 h-5 text-gray-600 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  Customer Information
+                </h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Name</p>
+                    <p className="text-sm text-gray-900">
+                      {call.userId.name || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Email</p>
+                    <p className="text-sm text-gray-900 break-all">
+                      {call.userId.email || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-500">Phone</p>
+                    <p className="text-sm text-gray-900">
+                      {call.userId.phone || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Call Information */}
+            <div className="bg-blue-50 shadow-md rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <svg
+                  className="w-5 h-5 text-gray-600 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                Call Details
+              </h3>
+              <div className="space-y-3">
+                {/* Add Customer Satisfaction Toggler here */}
+
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Type</p>
+                  <p className="text-sm text-gray-900 capitalize">
+                    {call.type || "Unknown"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500">
+                    AI Resolution
+                  </p>
+                  <p className="text-sm text-gray-900">
+                    {call.isResolvedByAi ? (
+                      <span className="text-green-600 flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Resolved by AI
+                      </span>
+                    ) : (
+                      <span className="text-yellow-600 flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Pending Resolution
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500">Ticket ID</p>
+                  <p className="text-sm text-gray-900">
+                    {call.ticketId || "Not Linked"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
