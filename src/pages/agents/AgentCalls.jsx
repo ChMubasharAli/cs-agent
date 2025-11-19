@@ -17,6 +17,8 @@ export default function AgentCalls() {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedCall, setSelectedCall] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Frontend pagination ke liye
 
   const queryClient = useQueryClient();
   const userDataString = localStorage.getItem("userData");
@@ -39,6 +41,30 @@ export default function AgentCalls() {
   });
 
   const calls = callsResponse || [];
+
+  // Frontend Pagination Logic
+  const totalCalls = calls.length || 0;
+  const totalPages = Math.ceil(totalCalls / itemsPerPage);
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+
+  // Current page ke calls calculate karein
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCalls = calls.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (hasNext) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (hasPrev) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   // Update Call Status Mutation
   const updateCallStatusMutation = useMutation({
@@ -115,11 +141,83 @@ export default function AgentCalls() {
             {/* Calls Table Section */}
             <div className="flex-1">
               <DisplayCalls
-                calls={calls}
+                calls={currentCalls} // Current page ke calls pass karein
                 modalOpen={open}
                 selectedCall={selectedCall}
                 setSelectedCall={setSelectedCall}
               />
+            </div>
+
+            {/* Pagination Section - Exact same design as other components */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 pt-4 border-t border-gray-200 gap-4">
+              {/* Previous/Next Buttons Only */}
+              <Group gap="sm">
+                {/* Previous Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handlePrevPage}
+                  disabled={!hasPrev}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasPrev ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  leftSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  }
+                >
+                  Previous
+                </Button>
+
+                {/* Next Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handleNextPage}
+                  disabled={!hasNext}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasNext ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  rightSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  }
+                >
+                  Next
+                </Button>
+              </Group>
+
+              <Text size="sm" c="dimmed">
+                Page {currentPage} of {totalPages} • {totalCalls} total calls
+              </Text>
             </div>
           </section>
         )}
