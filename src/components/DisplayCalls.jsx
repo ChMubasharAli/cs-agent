@@ -93,20 +93,20 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   }`}
                   onClick={() => setSelectedCall(call)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {index + 1}
                   </td>
                   {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
                   {call.userId || "N/A"}
                 </td> */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4">
                     {call.type}
                     {call.callCategory ? ` - ${call.callCategory}` : ""}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/4">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         call.isResolvedByAi

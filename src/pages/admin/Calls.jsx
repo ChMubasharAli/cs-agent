@@ -92,7 +92,7 @@ export default function Calls({ apiKey = "/api/calls", type = "" }) {
 
   return (
     <>
-      <main className="py-4 container mx-auto ">
+      <main className="py-4 container mx-auto  ">
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (
@@ -104,7 +104,7 @@ export default function Calls({ apiKey = "/api/calls", type = "" }) {
             No calls found.
           </Text>
         ) : (
-          <section className="h-full bg-white rounded-2xl p-2 flex flex-col">
+          <section className="h-full bg-white rounded-2xl p-2 flex flex-col shadow-lg">
             {/* Calls Table Section */}
             <div className="flex-1">
               <DisplayCalls

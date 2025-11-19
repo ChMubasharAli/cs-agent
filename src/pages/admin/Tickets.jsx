@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LoaderComp, DisplayTickets } from "../../components";
-import { Button, Modal, Select, Tabs, Text, Title } from "@mantine/core";
+import { Button, Modal, Select, Tabs, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -13,8 +13,9 @@ export default function Tickets({
   route = "/admin/tickets",
 }) {
   const [opened, { open, close }] = useDisclosure(false);
-
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Frontend pagination ke liye
 
   const queryClient = useQueryClient();
 
@@ -41,6 +42,30 @@ export default function Tickets({
       return apiClient.get("/api/agents").then((response) => response.data);
     },
   });
+
+  // Frontend Pagination Logic
+  const totalTickets = ticketsData.length || 0;
+  const totalPages = Math.ceil(totalTickets / itemsPerPage);
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+
+  // Current page ke tickets calculate karein
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentTickets = ticketsData.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (hasNext) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (hasPrev) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   // Transfer Ticket to the Agent usign TanStack Query
   const transferTicketMutation = useMutation({
@@ -145,7 +170,7 @@ export default function Tickets({
 
   return (
     <>
-      <main className="py-4 container mx-auto min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)]   ">
+      <main className="py-4 container mx-auto   ">
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
@@ -157,14 +182,90 @@ export default function Tickets({
             No tickets found.
           </Text>
         ) : (
-          <section className="h-full bg-white rounded-2xl p-2">
-            <DisplayTickets
-              route={route}
-              tickets={ticketsData}
-              modalOpen={open}
-              selectedTicket={selectedTicket}
-              setSelectedTicket={setSelectedTicket}
-            />
+          <section className="h-full bg-white rounded-2xl p-2 flex flex-col shadow-lg">
+            {/* Tickets Table Section */}
+            <div className="flex-1 overflow-y-auto">
+              <DisplayTickets
+                route={route}
+                tickets={currentTickets} // Current page ke tickets pass karein
+                modalOpen={open}
+                selectedTicket={selectedTicket}
+                setSelectedTicket={setSelectedTicket}
+              />
+            </div>
+
+            {/* Pagination Section - Exact same design as Calls component */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 pt-4 border-t border-gray-200 gap-4">
+              {/* Previous/Next Buttons Only */}
+              <Group gap="sm">
+                {/* Previous Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handlePrevPage}
+                  disabled={!hasPrev}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasPrev ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  leftSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  }
+                >
+                  Previous
+                </Button>
+
+                {/* Next Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handleNextPage}
+                  disabled={!hasNext}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasNext ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  rightSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  }
+                >
+                  Next
+                </Button>
+              </Group>
+
+              <Text size="sm" c="dimmed">
+                Page {currentPage} of {totalPages} • {totalTickets} total
+                tickets
+              </Text>
+            </div>
           </section>
         )}
       </main>

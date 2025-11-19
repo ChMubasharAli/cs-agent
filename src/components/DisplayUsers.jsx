@@ -13,7 +13,7 @@ export default function Displayusers({
     users.find((user) => user.id === selectedUser?.id) || selectedUser;
 
   return (
-    <section className="flex gap-x-4 h-full min-h-[85vh]   ">
+    <section className="flex gap-x-4 h-full    ">
       <div className="overflow-x-auto flex-1">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-primary sticky  top-0 left-0 z-30">

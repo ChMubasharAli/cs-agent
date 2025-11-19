@@ -22,6 +22,8 @@ export default function Users({ apiKey = "/api/users" }) {
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Frontend pagination ke liye
 
   // Fetch All Users using TanStack Query
   const {
@@ -34,6 +36,30 @@ export default function Users({ apiKey = "/api/users" }) {
       return apiClient.get(apiKey).then((response) => response.data);
     },
   });
+
+  // Frontend Pagination Logic
+  const totalUsers = usersData.length || 0;
+  const totalPages = Math.ceil(totalUsers / itemsPerPage);
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+
+  // Current page ke users calculate karein
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = usersData.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (hasNext) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (hasPrev) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
 
   // Update User status using TanStack Query
   const userStatusMutation = useMutation({
@@ -107,7 +133,7 @@ export default function Users({ apiKey = "/api/users" }) {
 
   return (
     <>
-      <main className="py-4 container mx-auto min-h-[calc(100dvh-72px)] md:min-h-[calc(100dvh-100px)]">
+      <main className="py-4 container mx-auto ">
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
@@ -119,14 +145,89 @@ export default function Users({ apiKey = "/api/users" }) {
             No users found.
           </Text>
         ) : (
-          <section className="h-full bg-white rounded-2xl p-2">
-            <Displayusers
-              statusModalOpen={openStatusModal}
-              deleteModalOpen={openDeleteModal}
-              users={usersData}
-              selectedUser={selectedUser}
-              setSelectedUser={setSelectedUser}
-            />
+          <section className="h-full bg-white rounded-2xl p-2 flex flex-col shadow-lg">
+            {/* Users Table Section */}
+            <div className="flex-1">
+              <Displayusers
+                statusModalOpen={openStatusModal}
+                deleteModalOpen={openDeleteModal}
+                users={currentUsers} // Current page ke users pass karein
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+              />
+            </div>
+
+            {/* Pagination Section - Exact same design as Calls component */}
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 pt-4 border-t border-gray-200 gap-4">
+              {/* Previous/Next Buttons Only */}
+              <Group gap="sm">
+                {/* Previous Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handlePrevPage}
+                  disabled={!hasPrev}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasPrev ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  leftSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  }
+                >
+                  Previous
+                </Button>
+
+                {/* Next Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius={"md"}
+                  onClick={handleNextPage}
+                  disabled={!hasNext}
+                  classNames={{
+                    root: `!border-primary !text-primary hover:!bg-primary/10 ${
+                      !hasNext ? "!opacity-50 !cursor-not-allowed" : ""
+                    }`,
+                  }}
+                  rightSection={
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  }
+                >
+                  Next
+                </Button>
+              </Group>
+
+              <Text size="sm" c="dimmed">
+                Page {currentPage} of {totalPages} • {totalUsers} total users
+              </Text>
+            </div>
           </section>
         )}
       </main>

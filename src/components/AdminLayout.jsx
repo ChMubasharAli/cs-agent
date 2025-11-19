@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaHome, FaTicketAlt, FaUser,  } from "react-icons/fa";
+import { FaHome, FaTicketAlt, FaUser } from "react-icons/fa";
 import {
   BsFillTelephoneInboundFill,
   BsFillTelephoneOutboundFill,
@@ -25,7 +25,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="flex h-screen ">
+    <div className="flex h-screen bg-gray-100 ">
       <Sidebar
         label="CS Admin"
         setIsOpen={setIsOpen}

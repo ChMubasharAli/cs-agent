@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Textarea, TextInput } from "@mantine/core";
+import { Button, Loader, Textarea, TextInput } from "@mantine/core";
 import { FiEdit, FiTrash2, FiSend } from "react-icons/fi";
 import apiClient from "../api/axios";
+import { notifications } from "@mantine/notifications";
 
 const TicketNotes = ({ ticketId }) => {
   const [newNote, setNewNote] = useState("");
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [selectedNoteId, setSelectedNoteId] = useState(null);
   const queryClient = useQueryClient();
 
   // Fetch notes - with safe data handling
@@ -51,7 +53,23 @@ const TicketNotes = ({ ticketId }) => {
     mutationFn: (noteId) =>
       apiClient.delete(`/api/tickets/${ticketId}/note/${noteId}`),
     onSuccess: () => {
+      notifications.show({
+        title: "Success",
+        message: "Note deleted successfully!",
+        color: "green", // primary
+        position: "top-right",
+        autoClose: 4000,
+      });
       queryClient.invalidateQueries({ queryKey: ["ticketNotes", ticketId] });
+    },
+    onError: () => {
+      notifications.show({
+        title: "Error",
+        message: "Failed to delete note. Try again",
+        color: "red", // accent
+        position: "top-right",
+        autoClose: 4000,
+      });
     },
   });
 
@@ -83,9 +101,7 @@ const TicketNotes = ({ ticketId }) => {
 
   // Handle delete note
   const handleDeleteNote = (noteId) => {
-    if (window.confirm("Delete this note?")) {
-      deleteNote.mutate(noteId);
-    }
+    deleteNote.mutate(noteId);
   };
 
   // Format date like WhatsApp
@@ -184,11 +200,18 @@ const TicketNotes = ({ ticketId }) => {
                             <FiEdit size={16} />
                           </button>
                           <button
-                            onClick={() => handleDeleteNote(note.id)}
+                            onClick={() => {
+                              setSelectedNoteId(note.id);
+                              handleDeleteNote(note.id);
+                            }}
                             className="text-red-400 cursor-pointer hover:text-red-600 hover:scale-110 duration-300 transition-all  "
                             title="Delete note"
                           >
-                            <FiTrash2 size={16} />
+                            {selectedNoteId === note.id ? (
+                              <Loader type="dots" size={"sm"} color="red" />
+                            ) : (
+                              <FiTrash2 size={16} />
+                            )}
                           </button>
                         </div>
                       </div>

@@ -282,18 +282,23 @@ const Agents = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-primary">
                 <tr>
-                  {["Avatar", "Name", "Email", "Type", "Rating", "Actions"].map(
-                    (dataVal) => (
-                      <th
-                        key={dataVal}
-                        className={`px-6 py-4 ${
-                          dataVal === "Actions" ? "text-center" : "text-left"
-                        } text-sm font-semibold text-white   tracking-wider`}
-                      >
-                        {dataVal}
-                      </th>
-                    )
-                  )}
+                  {[
+                    "Avatar",
+                    "Name",
+                    "Email",
+                    "Type",
+                    "Avg Rating",
+                    "Actions",
+                  ].map((dataVal) => (
+                    <th
+                      key={dataVal}
+                      className={`px-6 py-4 ${
+                        dataVal === "Actions" ? "text-center" : "text-left"
+                      } text-sm font-semibold text-white   tracking-wider`}
+                    >
+                      {dataVal}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
@@ -302,25 +307,34 @@ const Agents = () => {
                     key={agent.id}
                     className="hover:bg-primary/20 text-left transition duration-200 ease-in-out"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap  text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap  text-sm font-medium text-gray-900 w-1/6">
                       <Avatar color="blue" radius="xl">
                         {agent.firstName.charAt(0).toUpperCase()}
                         {agent.lastName.charAt(0).toUpperCase()}
                       </Avatar>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap capitalize text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap capitalize text-sm font-medium text-gray-900 w-1/6">
                       {`${agent.firstName} ${agent.lastName}`}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/6">
                       {agent.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/6">
                       {agent.ticketType}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      <Rating defaultValue={agent.rating} count={4} readOnly />
+                    <td className="px-6 py-4  whitespace-nowrap text-sm text-gray-600 w-1/6">
+                      {/* <div className="flex  items-center space-x-3"> */}
+                      <Rating
+                        defaultValue={agent.averageRating}
+                        count={4}
+                        readOnly
+                      />
+                      {/* <p className="text-blue-400 relative cursor-pointer after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full">
+                          View
+                        </p> */}
+                      {/* </div> */}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500 w-1/6">
                       <div className="flex justify-center gap-2 ">
                         <Button
                           onClick={() => handleEdit(agent)}

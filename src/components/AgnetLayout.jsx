@@ -18,7 +18,7 @@ export default function AgentLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-[#fcfefe] to-[#f8f9fa] ">
+    <div className="flex h-screen bg-gray-100  ">
       <Sidebar
         label="CS Agent"
         setIsOpen={setIsOpen}

@@ -68,7 +68,7 @@ export default function DisplayTickets({
   return (
     <>
       <section className="flex gap-x-4 h-full ">
-        <div className="overflow-x-auto flex-1">
+        <div className="overflow-x-auto  flex-1">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-primary sticky  top-0 left-0 z-30">
               <tr>
@@ -97,26 +97,26 @@ export default function DisplayTickets({
                   }`}
                   onClick={() => setSelectedTicket(ticket)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-600 w-1/5">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600  w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap capitalize text-sm text-gray-600  w-1/5">
                     {ticket.User
                       ? ` ${ticket.User.name}`
                       : ticket.User?.name || "Unknown"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-600 w-1/5">
                     {ticket.Agent
                       ? `${ticket.Agent.firstName} ${ticket.Agent.lastName}`
                       : "Unknown"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-600 w-1/5">
                     {ticket.ticketType}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-600 w-1/5">
                     {ticket.priority}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                  <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-600 w-1/5">
                     <button
                       onClick={() => {
                         setDeleteTicketId(ticket.id);
