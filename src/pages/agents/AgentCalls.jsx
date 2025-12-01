@@ -40,7 +40,7 @@ export default function AgentCalls() {
     enabled: !!userData?.id,
   });
 
-  const calls = callsResponse || [];
+  const calls = Array.isArray(callsResponse) ? callsResponse : [];
 
   // Frontend Pagination Logic
   const totalCalls = calls.length || 0;
