@@ -259,7 +259,7 @@ const CallDetails = () => {
                   Call Recording
                 </h3>
                 <div className="space-y-3">
-                  <Audio />
+                  <Audio callId={call.id} />
                 </div>
               </div>
 
