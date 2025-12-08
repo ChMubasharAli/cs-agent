@@ -47,7 +47,7 @@ const TicketDetails = () => {
         userId: ticket.userId,
       };
 
-      await axios.post("http://csagentbackend.getpie.io/email", emailData);
+      await axios.post(import.meta.env.VITE_EMAIL_URL, emailData);
 
       // Refresh the ticket data to show the new email
       queryClient.invalidateQueries(["ticket", id]);
