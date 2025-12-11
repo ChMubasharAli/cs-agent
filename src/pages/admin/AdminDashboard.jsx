@@ -66,7 +66,7 @@ export default function AdminDashboard() {
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-500/10",
       iconColor: "text-purple-500",
-      url: "/admin",
+      url: "/admin/inbound",
     },
     {
       title: "Inbound Calls",
