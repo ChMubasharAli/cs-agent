@@ -19,6 +19,7 @@ export default function AgentCalls() {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Frontend pagination ke liye
+  const [activeTab, setActiveTab] = useState("all"); // New state for tabs
 
   const queryClient = useQueryClient();
   const userDataString = localStorage.getItem("userData");
@@ -42,8 +43,16 @@ export default function AgentCalls() {
 
   const calls = Array.isArray(callsResponse) ? callsResponse : [];
 
+  // Filter calls based on active tab
+  const filteredCalls = calls.filter((call) => {
+    if (activeTab === "all") return true;
+    if (activeTab === "inbound") return call.type === "inbound";
+    if (activeTab === "outbound") return call.type === "outbound";
+    return true;
+  });
+
   // Frontend Pagination Logic
-  const totalCalls = calls.length || 0;
+  const totalCalls = filteredCalls.length || 0;
   const totalPages = Math.ceil(totalCalls / itemsPerPage);
   const hasNext = currentPage < totalPages;
   const hasPrev = currentPage > 1;
@@ -51,7 +60,7 @@ export default function AgentCalls() {
   // Current page ke calls calculate karein
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCalls = calls.slice(startIndex, endIndex);
+  const currentCalls = filteredCalls.slice(startIndex, endIndex);
 
   // Pagination handlers
   const handleNextPage = () => {
@@ -64,6 +73,13 @@ export default function AgentCalls() {
     if (hasPrev) {
       setCurrentPage((prev) => prev - 1);
     }
+  };
+
+  // Handle tab change - reset pagination when tab changes
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    setCurrentPage(1); // Reset to first page when tab changes
+    setSelectedCall(null); // Reset selected call when tab changes
   };
 
   // Update Call Status Mutation
@@ -125,7 +141,7 @@ export default function AgentCalls() {
 
   return (
     <>
-      <main className="py-4 container mx-auto ">
+      <main className="py-4 container mx-auto max-h-[85vh] h-full ">
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (
@@ -138,6 +154,19 @@ export default function AgentCalls() {
           </Text>
         ) : (
           <section className="h-full bg-white rounded-2xl p-2 flex flex-col">
+            {/* Tabs Section for filtering inbound/outbound calls */}
+            <div className="mb-4">
+              <Tabs color="green" value={activeTab} onChange={handleTabChange}>
+                <Tabs.List>
+                  <Tabs.Tab value="all">All Calls</Tabs.Tab>
+                  <Tabs.Tab value="inbound">Inbound Calls</Tabs.Tab>
+                  <Tabs.Tab value="outbound">Outbound Calls</Tabs.Tab>
+                </Tabs.List>
+              </Tabs>
+
+              {/* Show counts for each category */}
+            </div>
+
             {/* Calls Table Section */}
             <div className="flex-1">
               <DisplayCalls
@@ -216,7 +245,8 @@ export default function AgentCalls() {
               </Group>
 
               <Text size="sm" c="dimmed">
-                Page {currentPage} of {totalPages} • {totalCalls} total calls
+                Page {currentPage} of {totalPages} • {filteredCalls.length}{" "}
+                calls (Filtered: {activeTab})
               </Text>
             </div>
           </section>

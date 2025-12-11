@@ -1,12 +1,12 @@
 import { Button, Group, Modal, Text } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/axios";
 import { notifications } from "@mantine/notifications";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDisclosure } from "@mantine/hooks";
-import { RxCheck } from "react-icons/rx";
+import { RxCheck, RxCross2 } from "react-icons/rx";
 
 export default function DisplayTickets({
   route,
@@ -59,11 +59,9 @@ export default function DisplayTickets({
     }
   };
 
-  useEffect(() => {
-    if (tickets?.length > 0) {
-      setSelectedTicket(tickets[0]);
-    }
-  }, [tickets]);
+  // NOTE: Yahan se useEffect hata diya gaya hai jiski wajah se
+  // selectedTicket automatic reset nahi ho rahi thi
+  // Ab sirf user ka manual selection kaam karega
 
   return (
     <>

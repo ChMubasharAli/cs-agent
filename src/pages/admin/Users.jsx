@@ -133,7 +133,7 @@ export default function Users({ apiKey = "/api/users" }) {
 
   return (
     <>
-      <main className="py-4 container mx-auto ">
+      <main className="py-4 container mx-auto h-full max-h-[90vh] ">
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (

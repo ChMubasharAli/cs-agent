@@ -21,6 +21,7 @@ import { LoaderComp } from "../../components";
 import { Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../api/axios";
+import { Link } from "react-router-dom";
 
 export default function AdminDashboard() {
   // Fetch Dashboard Data using TanStack Query
@@ -45,6 +46,7 @@ export default function AdminDashboard() {
       color: "from-[#4bb22f] to-[#3d9625]",
       bgColor: "bg-[#4bb22f]/10",
       iconColor: "text-[#4bb22f]",
+      url: "/admin/users",
     },
     {
       title: "Total Tickets",
@@ -54,6 +56,7 @@ export default function AdminDashboard() {
       color: "from-[#3b82f6] to-[#2563eb]",
       bgColor: "bg-[#3b82f6]/10",
       iconColor: "text-[#3b82f6]",
+      url: "/admin/tickets",
     },
     {
       title: "Total Calls",
@@ -63,6 +66,7 @@ export default function AdminDashboard() {
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-500/10",
       iconColor: "text-purple-500",
+      url: "/admin",
     },
     {
       title: "Inbound Calls",
@@ -72,6 +76,7 @@ export default function AdminDashboard() {
       color: "from-emerald-500 to-emerald-600",
       bgColor: "bg-emerald-500/10",
       iconColor: "text-emerald-500",
+      url: "/admin/inbound",
     },
     {
       title: "Outbound Calls",
@@ -81,6 +86,7 @@ export default function AdminDashboard() {
       color: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-500/10",
       iconColor: "text-orange-500",
+      url: "/admin/outbound",
     },
   ];
 
@@ -118,7 +124,8 @@ export default function AdminDashboard() {
                 {getStatsCards(dashboardData.summary).map((stat, index) => {
                   const Icon = stat.icon;
                   return (
-                    <div
+                    <Link
+                      to={stat.url || "#"}
                       key={index}
                       className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
                     >
@@ -150,7 +157,7 @@ export default function AdminDashboard() {
                       <div
                         className={`h-1 bg-gradient-to-r ${stat.color}`}
                       ></div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

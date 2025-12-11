@@ -1,6 +1,5 @@
 import { Button, Group, Modal, Text } from "@mantine/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import apiClient from "../api/axios";
 import { useDisclosure } from "@mantine/hooks";
@@ -52,15 +51,10 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
       deleteCallMutation.mutate(selectedCall.id);
     }
   };
-  useEffect(() => {
-    if (calls?.length > 0) {
-      setSelectedCall(calls[0]);
-    }
-  }, [calls]);
 
   return (
     <>
-      <section className="flex gap-x-4 ">
+      <section className="flex gap-x-4 h-full ">
         {/* Calls Table */}
         <div className="overflow-x-auto flex-1">
           <table className="min-w-full  divide-y divide-gray-200">
@@ -188,7 +182,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                         User Name
                       </p>
                       <p className="text-xs font-semibold text-gray-900 mt-1">
-                        {selectedCall?.userId?.name || "N/A"}
+                        {selectedCall?.User?.name || "N/A"}
                       </p>
                     </div>
                   </div>

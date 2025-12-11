@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // useEffect add کیا ہے
 import { LoaderComp, DisplayTickets } from "../../components";
 import { Button, Modal, Select, Tabs, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -22,6 +22,22 @@ export default function Tickets({
   const [selectedAgent, setSelectedAgent] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedPriority, setSelectedPrority] = useState("");
+
+  // User role ke liye state add ki hai
+  const [userRole, setUserRole] = useState("");
+
+  // Component load hone par localStorage se userData get karna
+  useEffect(() => {
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      try {
+        const userData = JSON.parse(userDataString);
+        setUserRole(userData.role || "");
+      } catch (error) {
+        console.error("Error parsing userData from localStorage:", error);
+      }
+    }
+  }, []);
 
   // Fetch All Tickets using TanStack Query
   const {
@@ -170,7 +186,7 @@ export default function Tickets({
 
   return (
     <>
-      <main className="py-4 container mx-auto   ">
+      <main className="p4-4 container mx-auto max-h-[85vh] h-full   ">
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
@@ -286,57 +302,70 @@ export default function Tickets({
       >
         {/* Modal content */}
 
-        <Tabs defaultValue="transfer" variant="outline">
+        <Tabs defaultValue="status" variant="outline">
           <Tabs.List>
-            <Tabs.Tab value="transfer">Transfer</Tabs.Tab>
-            <Tabs.Tab value="status">Status</Tabs.Tab>
-            <Tabs.Tab value="priority">Priority</Tabs.Tab>
+            {/* Conditionally render tabs based on user role */}
+            {userRole === "admin" ? (
+              // Admin ke liye saare 3 tabs show karein
+              <>
+                <Tabs.Tab value="transfer">Transfer</Tabs.Tab>
+                <Tabs.Tab value="status">Status</Tabs.Tab>
+                <Tabs.Tab value="priority">Priority</Tabs.Tab>
+              </>
+            ) : (
+              // Agent ya kisi aur role ke liye sirf status tab show karein
+              <Tabs.Tab value="status">Status</Tabs.Tab>
+            )}
           </Tabs.List>
 
-          <Tabs.Panel value="transfer">
-            <Title
-              my={"md"}
-              ta={"center"}
-              classNames={{ root: "!text-heading" }}
-              order={3}
-            >
-              Transfer Your Ticket
-            </Title>
-
-            <section className="flex items-center justify-center flex-col gap-3">
-              <Select
-                classNames={{ root: "!w-full", label: "mb-1" }}
-                label="Select Agent"
-                value={selectedAgent}
-                onChange={setSelectedAgent}
-                data={agentsData?.map((agent) => ({
-                  value: agent.id.toString(), // string required
-                  label: `${agent?.firstName} ${agent?.lastName}`, // text to display
-                }))}
-                radius="md"
-                placeholder="Choose an agent"
-                searchable
-              />
-
-              <Button
-                radius="md"
-                onClick={() =>
-                  transferTicketMutation.mutate({
-                    ticketId: selectedTicket.id,
-                    agentId: selectedAgent,
-                  })
-                }
-                loading={transferTicketMutation.isPending}
-                loaderProps={{ type: "bars" }}
-                fullWidth
-                disabled={!selectedAgent || selectedAgent.trim().length === 0}
-                classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
+          {/* Transfer Tab Panel - sirf admin ke liye */}
+          {userRole === "admin" && (
+            <Tabs.Panel value="transfer">
+              <Title
+                my={"md"}
+                ta={"center"}
+                classNames={{ root: "!text-heading" }}
+                order={3}
               >
-                Transfer Ticket
-              </Button>
-            </section>
-          </Tabs.Panel>
+                Transfer Your Ticket
+              </Title>
 
+              <section className="flex items-center justify-center flex-col gap-3">
+                <Select
+                  classNames={{ root: "!w-full", label: "mb-1" }}
+                  label="Select Agent"
+                  value={selectedAgent}
+                  onChange={setSelectedAgent}
+                  data={agentsData?.map((agent) => ({
+                    value: agent.id.toString(), // string required
+                    label: `${agent?.firstName} ${agent?.lastName}`, // text to display
+                  }))}
+                  radius="md"
+                  placeholder="Choose an agent"
+                  searchable
+                />
+
+                <Button
+                  radius="md"
+                  onClick={() =>
+                    transferTicketMutation.mutate({
+                      ticketId: selectedTicket.id,
+                      agentId: selectedAgent,
+                    })
+                  }
+                  loading={transferTicketMutation.isPending}
+                  loaderProps={{ type: "bars" }}
+                  fullWidth
+                  disabled={!selectedAgent || selectedAgent.trim().length === 0}
+                  classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
+                >
+                  Transfer Ticket
+                </Button>
+              </section>
+            </Tabs.Panel>
+          )}
+
+          {/* Status Tab Panel - sab ke liye accessible */}
           <Tabs.Panel value="status">
             <Title
               my={"md"}
@@ -384,52 +413,55 @@ export default function Tickets({
             </section>
           </Tabs.Panel>
 
-          <Tabs.Panel value="priority">
-            <Title
-              my={"md"}
-              ta={"center"}
-              classNames={{ root: "!text-heading" }}
-              order={3}
-            >
-              Update Ticket Priority
-            </Title>
-
-            <section className="flex items-center justify-center flex-col gap-3">
-              <Select
-                value={selectedPriority}
-                onChange={setSelectedPrority}
-                data={[
-                  { value: "low", label: "Low" },
-                  { value: "medium", label: "Medium" },
-                  { value: "high", label: "High" },
-                  { value: "critical", label: "Critical" },
-                ]}
-                classNames={{ root: "!w-full", label: "mb-1" }}
-                label="Select Priority"
-                radius={"md"}
-                placeholder="Select Priority"
-              />
-              <Button
-                radius="md"
-                fullWidth
-                loading={ticketPriorityMutation.isPending}
-                loaderProps={{ type: "bars" }}
-                disabled={
-                  selectedPriority?.trim("")?.length <= 0 ||
-                  selectedPriority === null
-                }
-                onClick={() =>
-                  ticketPriorityMutation.mutate({
-                    ticketId: selectedTicket.id,
-                    priority: selectedPriority,
-                  })
-                }
-                classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
+          {/* Priority Tab Panel - sirf admin ke liye */}
+          {userRole === "admin" && (
+            <Tabs.Panel value="priority">
+              <Title
+                my={"md"}
+                ta={"center"}
+                classNames={{ root: "!text-heading" }}
+                order={3}
               >
-                Update Priority
-              </Button>
-            </section>
-          </Tabs.Panel>
+                Update Ticket Priority
+              </Title>
+
+              <section className="flex items-center justify-center flex-col gap-3">
+                <Select
+                  value={selectedPriority}
+                  onChange={setSelectedPrority}
+                  data={[
+                    { value: "low", label: "Low" },
+                    { value: "medium", label: "Medium" },
+                    { value: "high", label: "High" },
+                    { value: "critical", label: "Critical" },
+                  ]}
+                  classNames={{ root: "!w-full", label: "mb-1" }}
+                  label="Select Priority"
+                  radius={"md"}
+                  placeholder="Select Priority"
+                />
+                <Button
+                  radius="md"
+                  fullWidth
+                  loading={ticketPriorityMutation.isPending}
+                  loaderProps={{ type: "bars" }}
+                  disabled={
+                    selectedPriority?.trim("")?.length <= 0 ||
+                    selectedPriority === null
+                  }
+                  onClick={() =>
+                    ticketPriorityMutation.mutate({
+                      ticketId: selectedTicket.id,
+                      priority: selectedPriority,
+                    })
+                  }
+                  classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
+                >
+                  Update Priority
+                </Button>
+              </section>
+            </Tabs.Panel>
+          )}
         </Tabs>
       </Modal>
     </>

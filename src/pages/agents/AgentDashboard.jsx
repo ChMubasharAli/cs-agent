@@ -21,6 +21,7 @@ import { LoaderComp } from "../../components";
 import { Text } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../../api/axios";
+import { Link } from "react-router-dom";
 
 export default function AgentDashboard() {
   const userDataString = localStorage.getItem("userData");
@@ -50,6 +51,7 @@ export default function AgentDashboard() {
       color: "from-[#3b82f6] to-[#2563eb]",
       bgColor: "bg-[#3b82f6]/10",
       iconColor: "text-[#3b82f6]",
+      url: "/agent/tickets",
     },
     {
       title: "Total Calls",
@@ -59,6 +61,7 @@ export default function AgentDashboard() {
       color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-500/10",
       iconColor: "text-purple-500",
+      url: "/agent/calls",
     },
     {
       title: "Inbound Calls",
@@ -68,6 +71,7 @@ export default function AgentDashboard() {
       color: "from-emerald-500 to-emerald-600",
       bgColor: "bg-emerald-500/10",
       iconColor: "text-emerald-500",
+      url: "/agent/calls",
     },
     {
       title: "Outbound Calls",
@@ -77,6 +81,7 @@ export default function AgentDashboard() {
       color: "from-orange-500 to-orange-600",
       bgColor: "bg-orange-500/10",
       iconColor: "text-orange-500",
+      url: "/agent/calls",
     },
   ];
 
@@ -121,7 +126,8 @@ export default function AgentDashboard() {
                 {getStatsCards(dashboardData.summary).map((stat, index) => {
                   const Icon = stat.icon;
                   return (
-                    <div
+                    <Link
+                      to={stat.url || "#"}
                       key={index}
                       className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer border border-gray-100"
                     >
@@ -153,7 +159,7 @@ export default function AgentDashboard() {
                       <div
                         className={`h-1 bg-gradient-to-r ${stat.color}`}
                       ></div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
@@ -238,7 +244,7 @@ export default function AgentDashboard() {
                         (agent) =>
                           agent.agentId === dashboardData.scope?.agentId
                       )
-                      .map((agent, index) => (
+                      .map((agent) => (
                         <div key={agent.agentId} className="text-center">
                           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center">
                             <span className="text-2xl font-bold text-white">

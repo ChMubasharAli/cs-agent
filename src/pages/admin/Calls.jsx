@@ -92,7 +92,7 @@ export default function Calls({ apiKey = "/api/calls", type = "" }) {
 
   return (
     <>
-      <main className="py-4 container mx-auto  ">
+      <main className="py-4 container mx-auto  max-h-[90vh] h-full">
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (

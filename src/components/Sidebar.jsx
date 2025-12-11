@@ -149,7 +149,7 @@ export function Sidebar({ isOpen, setIsOpen, menuItems, setActiveItem }) {
                 >
                   {({ isActive }) => (
                     <div
-                      className={`w-full flex items-center px-3 py-3 rounded-xl transition-all duration-200 group ${
+                      className={`w-full flex items-center px-3 py-3 rounded-xl  group  ${
                         isActive
                           ? "bg-primary/20 text-heading border border-primary/30"
                           : "text-gray-600 hover:bg-primary/20 hover:text-heading"

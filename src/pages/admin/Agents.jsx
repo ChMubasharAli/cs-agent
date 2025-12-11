@@ -326,7 +326,7 @@ const Agents = () => {
                       {/* <div className="flex  items-center space-x-3"> */}
                       <Rating
                         defaultValue={agent.averageRating}
-                        count={4}
+                        count={5}
                         readOnly
                       />
                       {/* <p className="text-blue-400 relative cursor-pointer after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full">
