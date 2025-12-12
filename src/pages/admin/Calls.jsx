@@ -107,6 +107,7 @@ export default function Calls({ apiKey = "/api/calls", type = "" }) {
           <section className="h-full bg-white rounded-2xl p-2 flex flex-col shadow-lg">
             {/* Calls Table Section */}
             <div className="flex-1">
+              {/* Sirf yahan modalOpen ki jagah open pass karna hai */}
               <DisplayCalls
                 calls={calls}
                 modalOpen={open}

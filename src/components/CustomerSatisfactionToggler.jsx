@@ -10,13 +10,24 @@ const CustomerSatisfactionToggler = ({
   initialSatisfied,
   switchSize = "xl",
   textSize = "xs",
+  onToggleSuccess, // Naya prop add karenge
 }) => {
   const queryClient = useQueryClient();
 
   const { mutate: toggleSatisfaction, isPending: isToggling } = useMutation({
     mutationFn: () => apiClient.patch(`/api/call/${callId}/satisfied`),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // Individual call refresh
       queryClient.invalidateQueries(["call", callId]);
+
+      // Calls list refresh - IMPORTANT
+      queryClient.invalidateQueries(["calls"]);
+
+      // Notify parent component if callback provided
+      if (onToggleSuccess && response?.data) {
+        onToggleSuccess(response.data.data);
+      }
+
       notifications.show({
         title: "Success",
         message: "Customer satisfaction updated",

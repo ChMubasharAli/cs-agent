@@ -7,6 +7,7 @@ import { notifications } from "@mantine/notifications";
 import { FaTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
+import { useEffect } from "react"; // Import useEffect
 
 export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
   const queryClient = useQueryClient();
@@ -14,6 +15,31 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     deleteModalOpened,
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
+
+  // Jab calls update hote hain, selectedCall ko bhi update karein
+  useEffect(() => {
+    if (selectedCall && calls && calls.length > 0) {
+      // Find the updated call in calls array
+      const updatedCall = calls.find((call) => call.id === selectedCall.id);
+      if (updatedCall) {
+        // Check if customerSatisfied changed
+        if (updatedCall.customerSatisfied !== selectedCall.customerSatisfied) {
+          setSelectedCall(updatedCall);
+        }
+      }
+    }
+  }, [calls, selectedCall?.id, setSelectedCall]);
+
+  // Handle toggler success - update selectedCall
+  const handleSatisfactionToggle = (updatedCallData) => {
+    if (
+      selectedCall &&
+      updatedCallData &&
+      updatedCallData.id === selectedCall.id
+    ) {
+      setSelectedCall(updatedCallData);
+    }
+  };
 
   // Delete Call using TanStack Query
   const deleteCallMutation = useMutation({
@@ -23,6 +49,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     onSuccess: () => {
       queryClient.invalidateQueries(["calls"]); // Refetch users after success
       closeDeleteModal(); // Close modal
+      setSelectedCall(null); // Clear selected call
 
       notifications.show({
         title: "Success",
@@ -47,7 +74,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
   });
 
   const handleDeleteCall = () => {
-    if (selectedCall.id) {
+    if (selectedCall?.id) {
       deleteCallMutation.mutate(selectedCall.id);
     }
   };
@@ -90,9 +117,6 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {index + 1}
                   </td>
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
-                  {call.userId || "N/A"}
-                </td> */}
                   <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4">
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
@@ -208,8 +232,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                     )}
                 </div>
 
-                {/* Call Summary */}
-
+                {/* Customer Satisfaction Toggler */}
                 <div>
                   <h4 className="text-sm font-semibold text-primary mb-2 flex items-center">
                     User Satisfaction
@@ -218,6 +241,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   <CustomerSatisfactionToggler
                     callId={selectedCall.id}
                     initialSatisfied={selectedCall.customerSatisfied}
+                    onToggleSuccess={handleSatisfactionToggle}
                   />
                 </div>
 
