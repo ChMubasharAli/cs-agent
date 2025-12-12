@@ -206,7 +206,9 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                         User Name
                       </p>
                       <p className="text-xs font-semibold text-gray-900 mt-1">
-                        {selectedCall?.User?.name || "N/A"}
+                        {selectedCall?.User?.name ||
+                          selectedCall?.userId?.name ||
+                          "Hello"}
                       </p>
                     </div>
                   </div>
