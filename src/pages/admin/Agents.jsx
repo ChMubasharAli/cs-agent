@@ -190,7 +190,7 @@ const Agents = () => {
         firstName: agent.firstName || "",
         lastName: agent.lastName || "",
         email: agent.email || "",
-        password: "", // Do not prefill password for security
+        password: "", // Empty password field for edit mode
         ticketType: agent.ticketType || "",
         role: agent.role || "agent",
       });
@@ -387,9 +387,10 @@ const Agents = () => {
             radius="md"
             label="First Name"
             name="firstName"
+            placeholder="First name"
             value={formData.firstName}
             onChange={handleInputChange}
-            required
+            required={modalMode === "create" ? true : false}
             mb="md"
           />
           <TextInput
@@ -397,9 +398,10 @@ const Agents = () => {
             radius="md"
             label="Last Name"
             name="lastName"
+            placeholder="Last name"
             value={formData.lastName}
             onChange={handleInputChange}
-            required
+            required={modalMode === "create" ? true : false}
             mb="md"
           />
           <TextInput
@@ -407,24 +409,24 @@ const Agents = () => {
             radius="md"
             label="Email"
             name="email"
+            placeholder="Email"
             type="email"
             value={formData.email}
             onChange={handleInputChange}
-            required
+            required={modalMode === "create" ? true : false}
             mb="md"
           />
-          {modalMode === "create" && (
-            <PasswordInput
-              classNames={{ label: "mb-1" }}
-              radius="md"
-              label="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required={modalMode === "create"}
-              mb="md"
-            />
-          )}
+          <PasswordInput
+            classNames={{ label: "mb-1" }}
+            radius="md"
+            label="Password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required={modalMode === "create" ? true : false}
+            mb="md"
+          />
           <Select
             classNames={{ label: "mb-1" }}
             radius="md"
@@ -435,7 +437,7 @@ const Agents = () => {
               setFormData((prev) => ({ ...prev, ticketType: value }))
             }
             data={ticketTypeOptions}
-            required
+            required={modalMode === "create" ? true : false}
             mb="md"
             placeholder="Select agent type"
           />
