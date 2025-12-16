@@ -209,13 +209,15 @@ const Agents = () => {
       });
     },
     onError: (error) => {
-      console.error("Error deleting agent:", error);
+      console.error("Error deleting agent:", error.response.data.error);
       setIsDeleteModalOpen(false); // Close delete confirmation modal
       setDeletingAgentId(null); // Clear deleting agent ID
       // Show error notification
       notifications.show({
         title: "Error",
-        message: "Failed to delete agent. Please try again.",
+        message:
+          error.response.data.error ||
+          "Failed to delete agent. Please try again.",
         color: "red",
         icon: <RxCross2 size={18} />,
         position: "top-right",

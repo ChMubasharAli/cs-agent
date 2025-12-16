@@ -86,6 +86,25 @@ export default function DisplayOutboundCalls({
     }
   };
 
+  // upsell call and satisfaction call
+  async function callRequest(userId, type) {
+    try {
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-call`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          type: type,
+        }), // dynamic body
+      });
+    } catch (error) {
+      console.error("POST request failed:", error);
+      throw error; // optional
+    }
+  }
+
   return (
     <>
       <section className="flex gap-x-4 h-full ">
@@ -148,6 +167,9 @@ export default function DisplayOutboundCalls({
                   <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     {call.callCategory === "upsell" ? (
                       <Button
+                        onClick={() => {
+                          callRequest(call.userId.id, "upsell");
+                        }}
                         variant="light"
                         radius={"md"}
                         className="!w-[150px]"
@@ -157,6 +179,9 @@ export default function DisplayOutboundCalls({
                       </Button>
                     ) : (
                       <Button
+                        onClick={() => {
+                          callRequest(call.userId.id, "satisfaction");
+                        }}
                         variant="light"
                         color="green"
                         className="!w-[150px]"
