@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LoaderComp } from "../../components";
-import { Button, Modal, Select, Tabs, Text, Title, Group } from "@mantine/core";
+import { Button, Modal, Select, Text, Title, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   keepPreviousData,
@@ -13,19 +13,18 @@ import { RxCheck, RxCross2 } from "react-icons/rx";
 import apiClient from "../../api/axios";
 import DisplayCalls from "../../components/DisplayCalls";
 
-export default function AgentCalls() {
+export default function AgentInboundCalls() {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedCall, setSelectedCall] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10); // Frontend pagination ke liye
-  const [activeTab, setActiveTab] = useState("all"); // New state for tabs
+  const [itemsPerPage] = useState(10);
 
   const queryClient = useQueryClient();
   const userDataString = localStorage.getItem("userData");
   const userData = userDataString ? JSON.parse(userDataString) : null;
 
-  // Fetch Calls with Pagination using TanStack Query v5
+  // Fetch Calls with Pagination
   const {
     data: callsResponse = {},
     isLoading: callsLoading,
@@ -34,25 +33,19 @@ export default function AgentCalls() {
     queryKey: ["calls", userData?.id],
     queryFn: () => {
       return apiClient
-        .get(`api/call/${userData.id}/agent`) // Fixed to plural
+        .get(`api/call/${userData.id}/agent`)
         .then((response) => response.data);
     },
     placeholderData: keepPreviousData,
     enabled: !!userData?.id,
   });
 
-  const calls = Array.isArray(callsResponse) ? callsResponse : [];
+  // Sirf inbound calls filter karein
+  const allCalls = Array.isArray(callsResponse) ? callsResponse : [];
+  const inboundCalls = allCalls.filter((call) => call.type === "inbound");
 
-  // Filter calls based on active tab
-  const filteredCalls = calls.filter((call) => {
-    if (activeTab === "all") return true;
-    if (activeTab === "inbound") return call.type === "inbound";
-    if (activeTab === "outbound") return call.type === "outbound";
-    return true;
-  });
-
-  // Frontend Pagination Logic
-  const totalCalls = filteredCalls.length || 0;
+  // Frontend Pagination Logic sirf inbound calls ke liye
+  const totalCalls = inboundCalls.length || 0;
   const totalPages = Math.ceil(totalCalls / itemsPerPage);
   const hasNext = currentPage < totalPages;
   const hasPrev = currentPage > 1;
@@ -60,7 +53,7 @@ export default function AgentCalls() {
   // Current page ke calls calculate karein
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCalls = filteredCalls.slice(startIndex, endIndex);
+  const currentCalls = inboundCalls.slice(startIndex, endIndex);
 
   // Pagination handlers
   const handleNextPage = () => {
@@ -75,12 +68,10 @@ export default function AgentCalls() {
     }
   };
 
-  // Handle tab change - reset pagination when tab changes
-  const handleTabChange = (value) => {
-    setActiveTab(value);
-    setCurrentPage(1); // Reset to first page when tab changes
-    setSelectedCall(null); // Reset selected call when tab changes
-  };
+  // Reset pagination jab calls change hon
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [inboundCalls.length]);
 
   // Update Call Status Mutation
   const updateCallStatusMutation = useMutation({
@@ -92,7 +83,7 @@ export default function AgentCalls() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["calls"] });
       close();
-      setSelectedStatus(""); // Reset selection
+      setSelectedStatus("");
       notifications.show({
         title: "Success",
         message: "Call status updated successfully",
@@ -148,38 +139,26 @@ export default function AgentCalls() {
           <Text py={"md"} ta={"center"} c={"red"}>
             Failed to load Calls: {callsError.message}
           </Text>
-        ) : !Array.isArray(calls) || calls.length === 0 ? (
+        ) : inboundCalls.length === 0 ? (
           <Text py={"md"} ta={"center"}>
-            No calls found.
+            No inbound calls found.
           </Text>
         ) : (
           <section className="h-full bg-white rounded-2xl p-2 flex flex-col">
-            {/* Tabs Section for filtering inbound/outbound calls */}
-            <div className="mb-4">
-              <Tabs color="green" value={activeTab} onChange={handleTabChange}>
-                <Tabs.List>
-                  <Tabs.Tab value="all">All Calls</Tabs.Tab>
-                  <Tabs.Tab value="inbound">Inbound Calls</Tabs.Tab>
-                  <Tabs.Tab value="outbound">Outbound Calls</Tabs.Tab>
-                </Tabs.List>
-              </Tabs>
-
-              {/* Show counts for each category */}
-            </div>
+            {/* Header Section with Inbound Calls Title */}
 
             {/* Calls Table Section */}
             <div className="flex-1">
               <DisplayCalls
-                calls={currentCalls} // Current page ke calls pass karein
+                calls={currentCalls}
                 modalOpen={open}
                 selectedCall={selectedCall}
                 setSelectedCall={setSelectedCall}
               />
             </div>
 
-            {/* Pagination Section - Exact same design as other components */}
+            {/* Pagination Section */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-4 pt-4 border-t border-gray-200 gap-4">
-              {/* Previous/Next Buttons Only */}
               <Group gap="sm">
                 {/* Previous Button */}
                 <Button
@@ -245,8 +224,8 @@ export default function AgentCalls() {
               </Group>
 
               <Text size="sm" c="dimmed">
-                Page {currentPage} of {totalPages} • {filteredCalls.length}{" "}
-                calls (Filtered: {activeTab})
+                Page {currentPage} of {totalPages} • Showing{" "}
+                {currentCalls.length} of {inboundCalls.length} inbound calls
               </Text>
             </div>
           </section>

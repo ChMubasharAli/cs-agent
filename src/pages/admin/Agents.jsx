@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FaPencilAlt, FaTrashAlt, FaPlusCircle } from "react-icons/fa";
+import {
+  FaPencilAlt,
+  FaTrashAlt,
+  FaPlusCircle,
+  FaExpandArrowsAlt,
+} from "react-icons/fa";
 import {
   Modal,
   TextInput,
@@ -11,6 +16,9 @@ import {
   Group,
   Avatar,
   Rating,
+  Box,
+  Badge,
+  ScrollArea,
 } from "@mantine/core";
 import { RxCross2, RxCheck } from "react-icons/rx";
 import { LoaderComp } from "../../components";
@@ -66,6 +74,10 @@ const Agents = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState("create");
 
+  // State for rating modal
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+
   // State for delete confirmation modal
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletingAgentId, setDeletingAgentId] = useState(null);
@@ -88,6 +100,37 @@ const Agents = () => {
     { value: "sales", label: "Sales" },
     { value: "billing", label: "Billing" },
   ];
+
+  // Fetch agent ratings with TanStack Query v5
+  const {
+    data: agentRatings,
+    isLoading: isRatingsLoading,
+    error: ratingsError,
+    refetch: fetchRatings,
+  } = useQuery({
+    queryKey: ["agentRatings", selectedAgent?.id],
+    queryFn: async ({ queryKey }) => {
+      const agentId = queryKey[1];
+
+      if (!agentId) {
+        console.error("Cannot fetch ratings: No agent ID provided");
+        throw new Error("Agent ID is required to fetch ratings");
+      }
+
+      console.log("Fetching ratings for agent ID:", agentId);
+      const response = await apiClient.get(`/api/agents/${agentId}/ratings`);
+      return response.data;
+    },
+    enabled: false, // We'll manually trigger this when modal opens
+  });
+
+  // Trigger ratings fetch when modal opens and agent is selected
+  useEffect(() => {
+    if (isRatingModalOpen && selectedAgent?.id) {
+      console.log("Fetching ratings for agent:", selectedAgent.id);
+      fetchRatings();
+    }
+  }, [isRatingModalOpen, selectedAgent?.id]);
 
   // Mutation for creating a new agent
   const createMutation = useMutation({
@@ -206,6 +249,24 @@ const Agents = () => {
     setFormData(initialFormData);
   };
 
+  // Function to open rating modal
+  const handleOpenRatingModal = (agent) => {
+    console.log("Opening rating modal for agent ID:", agent?.id);
+    setSelectedAgent(agent);
+    setIsRatingModalOpen(true);
+
+    // Clear previous ratings data for this agent
+    if (agent?.id) {
+      queryClient.setQueryData(["agentRatings", agent.id], undefined);
+    }
+  };
+
+  // Function to close rating modal
+  const handleCloseRatingModal = () => {
+    setIsRatingModalOpen(false);
+    setSelectedAgent(null);
+  };
+
   // Function to open delete confirmation modal
   const handleOpenDeleteModal = (id) => {
     setDeletingAgentId(id);
@@ -305,7 +366,7 @@ const Agents = () => {
                 {agents.map((agent) => (
                   <tr
                     key={agent.id}
-                    className="hover:bg-primary/20 text-left transition duration-200 ease-in-out"
+                    className="hover:bg-primary/5 text-left transition duration-200 ease-in-out"
                   >
                     <td className="px-6 py-4 whitespace-nowrap  text-sm font-medium text-gray-900 w-1/6">
                       <Avatar color="blue" radius="xl">
@@ -323,16 +384,21 @@ const Agents = () => {
                       {agent.ticketType}
                     </td>
                     <td className="px-6 py-4  whitespace-nowrap text-sm text-gray-600 w-1/6">
-                      {/* <div className="flex  items-center space-x-3"> */}
-                      <Rating
-                        defaultValue={agent.averageRating}
-                        count={5}
-                        readOnly
-                      />
-                      {/* <p className="text-blue-400 relative cursor-pointer after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-blue-400 after:transition-all after:duration-300 hover:after:w-full">
-                          View
-                        </p> */}
-                      {/* </div> */}
+                      <Button
+                        title="Show Rating"
+                        variant="light"
+                        color="green"
+                        radius={"md"}
+                        className="cursor-pointer"
+                        rightSection={<FaExpandArrowsAlt />}
+                        onClick={() => handleOpenRatingModal(agent)}
+                      >
+                        <Rating
+                          defaultValue={agent.averageRating}
+                          count={5}
+                          readOnly
+                        />
+                      </Button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm  text-gray-500 w-1/6">
                       <div className="flex justify-center gap-2 ">
@@ -465,6 +531,190 @@ const Agents = () => {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      {/* Modal for Agent Ratings */}
+      <Modal
+        opened={isRatingModalOpen}
+        onClose={handleCloseRatingModal}
+        title={
+          selectedAgent
+            ? `${selectedAgent.firstName} ${selectedAgent.lastName}'s Ratings`
+            : "Agent Ratings"
+        }
+        size="lg"
+        centered
+        radius="lg"
+        classNames={{
+          title: "text-heading !text-xl !font-semibold",
+          close: "hover:!text-primary",
+        }}
+      >
+        {isRatingsLoading ? (
+          <div className="flex justify-center py-12">
+            <LoaderComp />
+          </div>
+        ) : ratingsError ? (
+          <div className="text-center py-8">
+            <Text c="red" mb="md">
+              Failed to load ratings
+            </Text>
+            <Button onClick={() => fetchRatings()} variant="light">
+              Try Again
+            </Button>
+          </div>
+        ) : agentRatings ? (
+          <Box>
+            {/* Ticket Statistics */}
+            {agentRatings.ticketStats && (
+              <Box mb="lg" className="bg-gray-50 p-4 rounded-lg">
+                <Text fw={600} mb="sm">
+                  Ticket Statistics
+                </Text>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <Box>
+                    <Text size="sm" c="dimmed">
+                      Total Tickets
+                    </Text>
+                    <Text fw={700} size="lg">
+                      {agentRatings.ticketStats.totalTickets}
+                    </Text>
+                  </Box>
+                  {agentRatings.ticketStats.statusCounts &&
+                    Object.entries(agentRatings.ticketStats.statusCounts).map(
+                      ([status, count]) => (
+                        <Box key={status}>
+                          <Text size="sm" c="dimmed" tt="capitalize">
+                            {status.replace("_", " ")}
+                          </Text>
+                          <Text fw={700} size="lg">
+                            {count}
+                          </Text>
+                        </Box>
+                      )
+                    )}
+                </div>
+              </Box>
+            )}
+
+            {/* Ratings Cards/Blocks */}
+            {agentRatings.ratings && agentRatings.ratings.length > 0 ? (
+              <ScrollArea h={400} type="auto">
+                <div className="space-y-4">
+                  {agentRatings.ratings.map((rating) => (
+                    <Box
+                      key={rating.id}
+                      className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                    >
+                      {/* Rating Score and Comments */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <div className="flex items-center gap-2 mb-4">
+                            <Rating value={rating.score} readOnly />
+                            <Text size="sm" fw={500} c="dimmed">
+                              ({rating.score}/5)
+                            </Text>
+                          </div>
+                        </div>
+                        <Badge
+                          color={
+                            rating.Ticket?.status === "open"
+                              ? "blue"
+                              : rating.Ticket?.status === "in_progress"
+                              ? "yellow"
+                              : rating.Ticket?.status === "resolved"
+                              ? "green"
+                              : "gray"
+                          }
+                          variant="light"
+                          tt="capitalize"
+                        >
+                          {rating.Ticket?.status?.replace("_", " ") || "N/A"}
+                        </Badge>
+                      </div>
+
+                      {/* Ticket Summary */}
+                      <Box className="mb-3">
+                        <Text fw={500} size="sm" mb={"xs"}>
+                          Comments:
+                        </Text>
+                        <Text
+                          size="sm"
+                          p={"sm"}
+                          className="text-gray-700 bg-white !w-full  rounded border border-gray-100"
+                        >
+                          {rating.comments}
+                        </Text>
+                      </Box>
+                      <Box className="mb-3">
+                        <Text fw={500} size="sm" mb={"xs"}>
+                          Ticket Summary:
+                        </Text>
+                        <Text
+                          size="sm"
+                          p={"sm"}
+                          className="text-gray-700 bg-white  rounded border border-gray-100"
+                        >
+                          {rating.Ticket?.summary || "No summary available"}
+                        </Text>
+                      </Box>
+
+                      {/* User Details */}
+                      <Box className="bg-white p-3 rounded border border-gray-100">
+                        <Text fw={500} size="sm" mb={"md"}>
+                          User Details:
+                        </Text>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          <Box>
+                            <Text size="xs" c="dimmed">
+                              Name
+                            </Text>
+                            <Text size="sm" fw={500}>
+                              {rating.User?.name || "N/A"}
+                            </Text>
+                          </Box>
+
+                          <Box>
+                            <Text size="xs" c="dimmed">
+                              Phone
+                            </Text>
+                            <Text size="sm" fw={500}>
+                              {rating.User?.phone || "N/A"}
+                            </Text>
+                          </Box>
+                          <Box className=" col-span-2">
+                            <Text size="xs" c="dimmed">
+                              Email
+                            </Text>
+                            <Text size="sm" fw={500}>
+                              {rating.User?.email || "N/A"}
+                            </Text>
+                          </Box>
+                        </div>
+                      </Box>
+
+                      {/* Date */}
+                      <Box className="mt-3 pt-3 border-t border-gray-200">
+                        <Text size="xs" c="dimmed">
+                          Created:{" "}
+                          {new Date(rating.createdAt).toLocaleDateString()}
+                        </Text>
+                      </Box>
+                    </Box>
+                  ))}
+                </div>
+              </ScrollArea>
+            ) : (
+              <Box className="text-center py-8">
+                <Text c="dimmed">No ratings found for this agent.</Text>
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <Box className="text-center py-8">
+            <Text c="dimmed">No rating data available.</Text>
+          </Box>
+        )}
       </Modal>
 
       {/* Modal for Delete Confirmation using Mantine UI */}

@@ -4,12 +4,19 @@ import { Link } from "react-router-dom";
 import apiClient from "../api/axios";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaChartLine, FaSmile, FaTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
 import { useEffect } from "react"; // Import useEffect
+import { FiMessageSquare, FiTrendingUp } from "react-icons/fi";
+import { VscCallOutgoing } from "react-icons/vsc";
+import { CiFaceSmile } from "react-icons/ci";
 
-export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
+export default function DisplayOutboundCalls({
+  calls,
+  selectedCall,
+  setSelectedCall,
+}) {
   const queryClient = useQueryClient();
   const [
     deleteModalOpened,
@@ -87,53 +94,78 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
           <table className="min-w-full  divide-y divide-gray-200">
             <thead className="bg-primary sticky top-0 left-0 z-30">
               <tr>
-                {["Sr. No", "User Name", "Type", "AI Resolution"].map(
-                  (dataVal) => (
-                    <th
-                      key={dataVal}
-                      className={`${
-                        dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
-                      } ${
-                        dataVal === "AI Resolution"
-                          ? "rounded-tr-2xl"
-                          : "text-left"
-                      } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
-                    >
-                      {dataVal}
-                    </th>
-                  )
-                )}
+                {[
+                  "Sr. No",
+                  "User Name",
+                  "Call-Type",
+                  "User Status",
+                  "Action-Call",
+                ].map((dataVal) => (
+                  <th
+                    key={dataVal}
+                    className={`${
+                      dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
+                    } ${
+                      dataVal === "Action-Call" ? "rounded-tr-2xl" : "text-left"
+                    } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
+                  >
+                    {dataVal}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
               {calls?.map((call, index) => (
                 <tr
                   key={call.id}
-                  className={`hover:bg-primary/20 cursor-pointer text-left transition duration-200 ease-in-out ${
+                  className={`hover:bg-primary/5 cursor-pointer text-left transition duration-200 ease-in-out ${
                     selectedCall?.id === call.id ? "bg-primary/20" : ""
                   }`}
                   onClick={() => setSelectedCall(call)}
                 >
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 capitalize w-1/5 ">
                     {call.type}
                     {call.callCategory ? ` - ${call.callCategory}` : ""}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        call.isResolvedByAi
+                        call.customerSatisfied
                           ? "bg-green-100 text-green-800"
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {call.isResolvedByAi ? "Resolved" : "Pending"}
+                      {call.customerSatisfied ? "Interested" : "Not-Interested"}
                     </span>
+                  </td>
+
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
+                    {call.callCategory === "upsell" ? (
+                      <Button
+                        variant="light"
+                        radius={"md"}
+                        className="!w-[150px]"
+                        leftSection={<VscCallOutgoing size={18} />}
+                      >
+                        Upsell-Call
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="light"
+                        color="green"
+                        className="!w-[150px]"
+                        radius={"md"}
+                        leftSection={<CiFaceSmile size={18} />}
+                      >
+                        Satisfaction
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

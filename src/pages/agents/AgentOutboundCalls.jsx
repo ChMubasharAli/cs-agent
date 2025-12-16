@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { LoaderComp } from "../../components";
-import { Button, Modal, Select, Tabs, Text, Title, Group } from "@mantine/core";
+import { Button, Modal, Select, Text, Title, Group, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   keepPreviousData,
@@ -8,62 +8,92 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-
 import { notifications } from "@mantine/notifications";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import apiClient from "../../api/axios";
 import DisplayOutboundCalls from "../../components/DisplayOutboundCall";
 
-export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
+export default function AgentOutboundCalls() {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedCall, setSelectedCall] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [activeTab, setActiveTab] = useState("all"); // "all", "satisfaction", "upsell"
 
   const queryClient = useQueryClient();
+  const userDataString = localStorage.getItem("userData");
+  const userData = userDataString ? JSON.parse(userDataString) : null;
 
-  // Fetch Calls with Pagination using TanStack Query v5
+  // Fetch Calls with Pagination
   const {
     data: callsResponse = {},
     isLoading: callsLoading,
     error: callsError,
   } = useQuery({
-    queryKey: ["calls", currentPage, type],
+    queryKey: ["calls", userData?.id],
     queryFn: () => {
       return apiClient
-        .get(`${apiKey}?page=${currentPage}&type=${type}`)
+        .get(`api/call/${userData.id}/agent`)
         .then((response) => response.data);
     },
     placeholderData: keepPreviousData,
+    enabled: !!userData?.id,
   });
 
-  const { data: calls = [], meta = {} } = callsResponse;
-  const {
-    page = 1,
-    totalPages = 1,
-    hasNext = false,
-    hasPrev = false,
-    total = 0,
-  } = meta;
+  // Sirf outbound calls filter karein
+  const allCalls = Array.isArray(callsResponse) ? callsResponse : [];
+  const outboundCalls = allCalls.filter((call) => call.type === "outbound");
 
-  // Filter calls based on active tab
+  // Tabs ke hisab se filtering
   const filteredCalls = useMemo(() => {
     if (activeTab === "all") {
-      return calls;
+      return outboundCalls;
     }
-    return calls.filter((call) => call.callCategory === activeTab);
-  }, [calls, activeTab]);
+    // Assume callCategory field exists in your data
+    return outboundCalls.filter((call) => call.callCategory === activeTab);
+  }, [outboundCalls, activeTab]);
+
+  // Frontend Pagination Logic filtered calls ke liye
+  const totalCalls = filteredCalls.length || 0;
+  const totalPages = Math.ceil(totalCalls / itemsPerPage);
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+
+  // Current page ke calls calculate karein
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentCalls = filteredCalls.slice(startIndex, endIndex);
+
+  // Pagination handlers
+  const handleNextPage = () => {
+    if (hasNext) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (hasPrev) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  // Reset pagination jab activeTab ya filteredCalls change hon
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, filteredCalls.length]);
 
   // Update Call Status Mutation
   const updateCallStatusMutation = useMutation({
     mutationFn: ({ callId, isResolved }) => {
-      return apiClient.patch(`/api/calls/${callId}/status`, {
+      return apiClient.patch(`/api/call/${callId}/status`, {
         isResolvedByAi: isResolved,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["calls"] });
       close();
+      setSelectedStatus("");
       notifications.show({
         title: "Success",
         message: "Call status updated successfully",
@@ -86,35 +116,46 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
     },
   });
 
-  // Pagination handlers
-  const handleNextPage = () => {
-    if (hasNext) {
-      setCurrentPage((prev) => prev + 1);
+  const handleUpdateStatus = () => {
+    if (!selectedCall || !selectedStatus) {
+      notifications.show({
+        title: "Error",
+        message: "Please select a status",
+        color: "red",
+        icon: <RxCross2 size={18} />,
+        position: "top-right",
+        autoClose: 4000,
+      });
+      return;
     }
+
+    updateCallStatusMutation.mutate({
+      callId: selectedCall.id,
+      isResolved: selectedStatus === "true",
+    });
   };
 
-  const handlePrevPage = () => {
-    if (hasPrev) {
-      setCurrentPage((prev) => prev - 1);
-    }
+  const handleModalClose = () => {
+    close();
+    setSelectedStatus("");
   };
 
   return (
     <>
-      <main className="py-4 container mx-auto   ">
+      <main className="py-4 container mx-auto    ">
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (
           <Text py={"md"} ta={"center"} c={"red"}>
             Failed to load Calls: {callsError.message}
           </Text>
-        ) : !Array.isArray(calls) || calls.length === 0 ? (
+        ) : outboundCalls.length === 0 ? (
           <Text py={"md"} ta={"center"}>
-            No calls found.
+            No outbound calls found.
           </Text>
         ) : (
           <section className="h-full bg-white rounded-2xl p-2 flex flex-col">
-            {/* Tabs Section */}
+            {/* Tabs Section - Added Here */}
             <Tabs
               color="green"
               radius={"lg"}
@@ -165,18 +206,15 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
             {/* Calls Table Section */}
             <div className="flex-1">
               <DisplayOutboundCalls
-                calls={filteredCalls}
+                calls={currentCalls}
                 modalOpen={open}
                 selectedCall={selectedCall}
                 setSelectedCall={setSelectedCall}
               />
             </div>
 
-            {/* Simplified Pagination Section */}
+            {/* Pagination Section */}
             <div className="flex flex-col sm:flex-row justify-between items-center mt-4 pt-4 border-t border-gray-200 gap-4">
-              {/* Page Info */}
-
-              {/* Previous/Next Buttons Only */}
               <Group gap="sm">
                 {/* Previous Button */}
                 <Button
@@ -242,9 +280,9 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
               </Group>
 
               <Text size="sm" c="dimmed">
-                Page {page} of {totalPages} • {total} total calls
-                {activeTab !== "all" &&
-                  ` • Showing ${filteredCalls.length} ${activeTab} calls`}
+                Page {currentPage} of {totalPages} • Showing{" "}
+                {currentCalls.length} of {filteredCalls.length} calls
+                {activeTab !== "all" && ` • ${activeTab} calls`}
               </Text>
             </div>
           </section>
@@ -254,7 +292,7 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
       {/* Modal for Update Call */}
       <Modal
         opened={opened}
-        onClose={close}
+        onClose={handleModalClose}
         centered
         size={"md"}
         closeOnClickOutside={false}
@@ -283,6 +321,8 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
               { value: "true", label: "Resolved by AI" },
               { value: "false", label: "Pending Resolution" },
             ]}
+            value={selectedStatus}
+            onChange={setSelectedStatus}
             radius="md"
             placeholder="Select status"
           />
@@ -292,13 +332,8 @@ export default function OutboundCalls({ apiKey = "/api/calls", type = "" }) {
             fullWidth
             loading={updateCallStatusMutation.isPending}
             loaderProps={{ type: "bars" }}
-            onClick={() =>
-              updateCallStatusMutation.mutate({
-                callId: selectedCall?.id,
-                isResolved: true, // You can map this from select value
-              })
-            }
-            disabled={!selectedCall}
+            onClick={handleUpdateStatus}
+            disabled={!selectedCall || !selectedStatus}
             classNames={{ root: "!bg-primary hover:!bg-primary-hover" }}
           >
             Update Status
