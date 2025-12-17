@@ -100,7 +100,7 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
         }
       );
 
-      if (response.ok)
+      if (response.ok) {
         return notifications.show({
           title: "Success",
           message: "Call in progress ",
@@ -109,9 +109,18 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
           position: "top-right",
           autoClose: 4000,
         });
-    } catch (error) {
-      console.error("POST request failed:", error);
-      throw error; // optional
+      } else {
+        notifications.show({
+          title: "Error",
+          message: "Call Hangup. Please try again !",
+          color: "red",
+          icon: <RxCross2 size={18} />,
+          position: "top-right",
+          autoClose: 4000,
+        });
+      }
+    } catch {
+      console.log("call error");
     } finally {
       setSelectedCallId(null);
     }
