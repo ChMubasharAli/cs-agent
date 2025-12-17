@@ -7,7 +7,9 @@ import { notifications } from "@mantine/notifications";
 import { FaTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
-import { useEffect } from "react"; // Import useEffect
+import { useEffect, useState } from "react"; // Import useEffect
+import { VscCallOutgoing } from "react-icons/vsc";
+import { CiFaceSmile } from "react-icons/ci";
 
 export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
   const queryClient = useQueryClient();
@@ -15,6 +17,8 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     deleteModalOpened,
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
+
+  const [selectedCallId, setSelectedCallId] = useState(null);
 
   // Jab calls update hote hain, selectedCall ko bhi update karein
   useEffect(() => {
@@ -79,6 +83,40 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     }
   };
 
+  // upsell call and satisfaction call
+  async function callRequest(userId, type) {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/send-call`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            type: type,
+          }), // dynamic body
+        }
+      );
+
+      if (response.ok)
+        return notifications.show({
+          title: "Success",
+          message: "Call in progress ",
+          color: "green",
+          icon: <RxCheck size={18} />,
+          position: "top-right",
+          autoClose: 4000,
+        });
+    } catch (error) {
+      console.error("POST request failed:", error);
+      throw error; // optional
+    } finally {
+      setSelectedCallId(null);
+    }
+  }
+
   return (
     <>
       <section className="flex gap-x-4 h-full ">
@@ -87,22 +125,24 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
           <table className="min-w-full  divide-y divide-gray-200">
             <thead className="bg-primary sticky top-0 left-0 z-30">
               <tr>
-                {["Sr. No", "User Name", "Type", "AI Resolution"].map(
-                  (dataVal) => (
-                    <th
-                      key={dataVal}
-                      className={`${
-                        dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
-                      } ${
-                        dataVal === "AI Resolution"
-                          ? "rounded-tr-2xl"
-                          : "text-left"
-                      } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
-                    >
-                      {dataVal}
-                    </th>
-                  )
-                )}
+                {[
+                  "Sr. No",
+                  "User Name",
+                  "Type",
+                  "AI Resolution",
+                  "Action Call",
+                ].map((dataVal) => (
+                  <th
+                    key={dataVal}
+                    className={`${
+                      dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
+                    } ${
+                      dataVal === "Action Call" ? "rounded-tr-2xl" : "text-left"
+                    } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
+                  >
+                    {dataVal}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -114,17 +154,17 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   }`}
                   onClick={() => setSelectedCall(call)}
                 >
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     {call?.userId?.name || call?.User?.name || "N/A"}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 capitalize w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 capitalize w-1/5 ">
                     {call.type}
                     {call.callCategory ? ` - ${call.callCategory}` : ""}
                   </td>
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/4 ">
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         call.isResolvedByAi
@@ -134,6 +174,41 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                     >
                       {call.isResolvedByAi ? "Resolved" : "Pending"}
                     </span>
+                  </td>
+
+                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
+                    {call.callCategory === "upsell" ? (
+                      <Button
+                        loading={selectedCallId === call.id}
+                        loaderProps={{ type: "dots" }}
+                        onClick={() => {
+                          setSelectedCallId(call.id);
+                          callRequest(call.userId, "upsell");
+                        }}
+                        variant="light"
+                        radius={"md"}
+                        className="!w-[150px]"
+                        leftSection={<VscCallOutgoing size={18} />}
+                      >
+                        Upsell-Call
+                      </Button>
+                    ) : (
+                      <Button
+                        loading={selectedCallId === call.id}
+                        loaderProps={{ type: "dots" }}
+                        onClick={() => {
+                          setSelectedCallId(call.id);
+                          callRequest(call.userId, "satisfaction");
+                        }}
+                        variant="light"
+                        color="green"
+                        className="!w-[150px]"
+                        radius={"md"}
+                        leftSection={<CiFaceSmile size={18} />}
+                      >
+                        Satisfaction
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}

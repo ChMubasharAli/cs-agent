@@ -86,25 +86,6 @@ export default function DisplayOutboundCalls({
     }
   };
 
-  // upsell call and satisfaction call
-  async function callRequest(userId, type) {
-    try {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-call`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: userId,
-          type: type,
-        }), // dynamic body
-      });
-    } catch (error) {
-      console.error("POST request failed:", error);
-      throw error; // optional
-    }
-  }
-
   return (
     <>
       <section className="flex gap-x-4 h-full ">
@@ -113,24 +94,22 @@ export default function DisplayOutboundCalls({
           <table className="min-w-full  divide-y divide-gray-200">
             <thead className="bg-primary sticky top-0 left-0 z-30">
               <tr>
-                {[
-                  "Sr. No",
-                  "User Name",
-                  "Call-Type",
-                  "User Status",
-                  "Action-Call",
-                ].map((dataVal) => (
-                  <th
-                    key={dataVal}
-                    className={`${
-                      dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
-                    } ${
-                      dataVal === "Action-Call" ? "rounded-tr-2xl" : "text-left"
-                    } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
-                  >
-                    {dataVal}
-                  </th>
-                ))}
+                {["Sr. No", "User Name", "Call-Type", "User Status"].map(
+                  (dataVal) => (
+                    <th
+                      key={dataVal}
+                      className={`${
+                        dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
+                      } ${
+                        dataVal === "User Status"
+                          ? "rounded-tr-2xl"
+                          : "text-left"
+                      } px-6 py-4 text-sm font-semibold tracking-wider text-white`}
+                    >
+                      {dataVal}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -162,35 +141,6 @@ export default function DisplayOutboundCalls({
                     >
                       {call.customerSatisfied ? "Interested" : "Not-Interested"}
                     </span>
-                  </td>
-
-                  <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
-                    {call.callCategory === "upsell" ? (
-                      <Button
-                        onClick={() => {
-                          callRequest(call.userId.id, "upsell");
-                        }}
-                        variant="light"
-                        radius={"md"}
-                        className="!w-[150px]"
-                        leftSection={<VscCallOutgoing size={18} />}
-                      >
-                        Upsell-Call
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => {
-                          callRequest(call.userId.id, "satisfaction");
-                        }}
-                        variant="light"
-                        color="green"
-                        className="!w-[150px]"
-                        radius={"md"}
-                        leftSection={<CiFaceSmile size={18} />}
-                      >
-                        Satisfaction
-                      </Button>
-                    )}
                   </td>
                 </tr>
               ))}
