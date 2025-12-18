@@ -1,5 +1,8 @@
 import { Button } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
+import { RxCheck, RxCross2 } from "react-icons/rx";
+import { VscCallOutgoing } from "react-icons/vsc";
 
 export default function Displayusers({
   users,
@@ -12,24 +15,49 @@ export default function Displayusers({
   const currentSelectedUser =
     users.find((user) => user.id === selectedUser?.id) || selectedUser;
 
+  //  satisfaction call
+  async function callRequest(userId, type) {
+    notifications.show({
+      title: "Success",
+      message: "Call in progress ",
+      color: "green",
+      icon: <RxCheck size={18} />,
+      position: "top-right",
+      autoClose: 4000,
+    });
+
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-call`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        type: type,
+      }), // dynamic body
+    });
+  }
+
   return (
     <section className="flex gap-x-4 h-full    ">
       <div className="overflow-x-auto flex-1">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-primary sticky  top-0 left-0 z-30">
             <tr>
-              {["Sr. No", "Name", "Email", "Phone", "Role"].map((dataVal) => (
-                <th
-                  key={dataVal}
-                  className={`${
-                    dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
-                  } ${
-                    dataVal === "Role" ? "rounded-tr-2xl" : "text-left"
-                  } px-6 py-4 text-sm font-semibold  tracking-wider text-white`}
-                >
-                  {dataVal}
-                </th>
-              ))}
+              {["Sr. No", "Name", "Email", "Phone", "Role", "Action Call"].map(
+                (dataVal) => (
+                  <th
+                    key={dataVal}
+                    className={`${
+                      dataVal === "Sr. No" ? "rounded-tl-2xl" : "text-left"
+                    } ${
+                      dataVal === "Action Call" ? "rounded-tr-2xl" : "text-left"
+                    } px-6 py-4 text-sm font-semibold  tracking-wider text-white`}
+                  >
+                    {dataVal}
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
@@ -41,20 +69,35 @@ export default function Displayusers({
                 }`}
                 onClick={() => setSelectedUser(user)}
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/6">
                   {index + 1}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600 w-1/5">
+                <td className="px-6 py-4 whitespace-nowrap capitalize text-sm text-gray-600 w-1/6">
                   {user?.name || "Unknown"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/6">
                   {user?.email || "Unknown"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/5">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 w-1/6">
                   {user?.phone || "Unknown"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/5">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/6">
                   {user?.role || "Unknown"}
+                </td>
+
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize w-1/6">
+                  <Button
+                    loaderProps={{ type: "dots" }}
+                    onClick={() => {
+                      callRequest(user.id, "upsell");
+                    }}
+                    variant="light"
+                    radius={"md"}
+                    className="!w-[150px]"
+                    leftSection={<VscCallOutgoing size={18} />}
+                  >
+                    Upsell-Call
+                  </Button>
                 </td>
               </tr>
             ))}

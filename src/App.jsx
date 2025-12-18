@@ -25,8 +25,11 @@ import CallDetails from "./components/CallsDetails";
 import AgentCalls from "./pages/agents/AgentInboundCalls";
 import AgentInboundCalls from "./pages/agents/AgentInboundCalls";
 import AgentOutboundCalls from "./pages/agents/AgentOutboundCalls";
+import UpsellCalls from "./pages/agents/UpsellCalls";
 
 export default function App() {
+  const userDataString = localStorage.getItem("userData");
+  const userData = userDataString ? JSON.parse(userDataString) : null;
   return (
     <Router>
       <Routes>
@@ -66,6 +69,12 @@ export default function App() {
           <Route path="/agent" element={<AgentLayout />}>
             <Route index element={<AgentDashboard />} />
             <Route path="tickets" element={<AgentTickets />} />
+            <Route
+              path="upsell"
+              element={
+                <UpsellCalls apiKey={`/api/agents/${userData.id}/users`} />
+              }
+            />
             <Route path="tickets/:id" element={<TicketDetails />} />
             <Route
               path="inbound"

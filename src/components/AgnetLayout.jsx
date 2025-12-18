@@ -4,7 +4,10 @@ import { LuTickets } from "react-icons/lu";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import Header from "./Header";
-import { BsFillTelephoneInboundFill, BsFillTelephoneOutboundFill } from "react-icons/bs";
+import {
+  BsFillTelephoneInboundFill,
+  BsFillTelephoneOutboundFill,
+} from "react-icons/bs";
 
 export default function AgentLayout() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +17,11 @@ export default function AgentLayout() {
 
   const menuItems = [
     { name: "Dashboard", icon: FaHome, href: ".", end: true },
+    {
+      name: "Upsell Calls",
+      icon: BsFillTelephoneOutboundFill,
+      href: "upsell",
+    },
     { name: "Tickets", icon: LuTickets, href: "tickets" },
     { name: "Inbound", icon: BsFillTelephoneInboundFill, href: "inbound" },
     { name: "Outbound", icon: BsFillTelephoneOutboundFill, href: "outbound" },

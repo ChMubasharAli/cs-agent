@@ -7,7 +7,7 @@ import { notifications } from "@mantine/notifications";
 import { FaTrashAlt } from "react-icons/fa";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
-import { useEffect, useState } from "react"; // Import useEffect
+import { useEffect } from "react"; // Import useEffect
 import { VscCallOutgoing } from "react-icons/vsc";
 import { CiFaceSmile } from "react-icons/ci";
 
@@ -17,8 +17,6 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     deleteModalOpened,
     { open: openDeleteModal, close: closeDeleteModal },
   ] = useDisclosure(false);
-
-  const [selectedCallId, setSelectedCallId] = useState(null);
 
   // Jab calls update hote hain, selectedCall ko bhi update karein
   useEffect(() => {
@@ -83,47 +81,26 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
     }
   };
 
-  // upsell call and satisfaction call
+  //  satisfaction call
   async function callRequest(userId, type) {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/send-call`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: userId,
-            type: type,
-          }), // dynamic body
-        }
-      );
-
-      if (response.ok) {
-        return notifications.show({
-          title: "Success",
-          message: "Call in progress ",
-          color: "green",
-          icon: <RxCheck size={18} />,
-          position: "top-right",
-          autoClose: 4000,
-        });
-      } else {
-        notifications.show({
-          title: "Error",
-          message: "Call Hangup. Please try again !",
-          color: "red",
-          icon: <RxCross2 size={18} />,
-          position: "top-right",
-          autoClose: 4000,
-        });
-      }
-    } catch {
-      console.log("call error");
-    } finally {
-      setSelectedCallId(null);
-    }
+    notifications.show({
+      title: "Success",
+      message: "Call in progress ",
+      color: "green",
+      icon: <RxCheck size={18} />,
+      position: "top-right",
+      autoClose: 4000,
+    });
+    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/send-call`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        type: type,
+      }), // dynamic body
+    });
   }
 
   return (
@@ -186,38 +163,19 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                   </td>
 
                   <td className="px-6 py-5 whitespace-nowrap text-sm text-gray-600 w-1/5 ">
-                    {call.callCategory === "upsell" ? (
-                      <Button
-                        loading={selectedCallId === call.id}
-                        loaderProps={{ type: "dots" }}
-                        onClick={() => {
-                          setSelectedCallId(call.id);
-                          callRequest(call.userId, "upsell");
-                        }}
-                        variant="light"
-                        radius={"md"}
-                        className="!w-[150px]"
-                        leftSection={<VscCallOutgoing size={18} />}
-                      >
-                        Upsell-Call
-                      </Button>
-                    ) : (
-                      <Button
-                        loading={selectedCallId === call.id}
-                        loaderProps={{ type: "dots" }}
-                        onClick={() => {
-                          setSelectedCallId(call.id);
-                          callRequest(call.userId, "satisfaction");
-                        }}
-                        variant="light"
-                        color="green"
-                        className="!w-[150px]"
-                        radius={"md"}
-                        leftSection={<CiFaceSmile size={18} />}
-                      >
-                        Satisfaction
-                      </Button>
-                    )}
+                    <Button
+                      loaderProps={{ type: "dots" }}
+                      onClick={() => {
+                        callRequest(call.userId, "satisfaction");
+                      }}
+                      variant="light"
+                      color="green"
+                      className="!w-[150px]"
+                      radius={"md"}
+                      leftSection={<CiFaceSmile size={18} />}
+                    >
+                      Satisfaction
+                    </Button>
                   </td>
                 </tr>
               ))}
