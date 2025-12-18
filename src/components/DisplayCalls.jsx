@@ -11,7 +11,12 @@ import { useEffect } from "react"; // Import useEffect
 import { VscCallOutgoing } from "react-icons/vsc";
 import { CiFaceSmile } from "react-icons/ci";
 
-export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
+export default function DisplayCalls({
+  calls,
+  selectedCall,
+  setSelectedCall,
+  agentSide = false,
+}) {
   const queryClient = useQueryClient();
   const [
     deleteModalOpened,
@@ -166,7 +171,10 @@ export default function DisplayCalls({ calls, selectedCall, setSelectedCall }) {
                     <Button
                       loaderProps={{ type: "dots" }}
                       onClick={() => {
-                        callRequest(call.userId, "satisfaction");
+                        callRequest(
+                          `${agentSide ? call.userId : call.userId.id}`,
+                          "satisfaction"
+                        );
                       }}
                       variant="light"
                       color="green"

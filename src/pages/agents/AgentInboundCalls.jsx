@@ -154,6 +154,7 @@ export default function AgentInboundCalls() {
                 modalOpen={open}
                 selectedCall={selectedCall}
                 setSelectedCall={setSelectedCall}
+                agentSide={true}
               />
             </div>
 
