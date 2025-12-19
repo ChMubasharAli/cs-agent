@@ -72,7 +72,7 @@ export default function App() {
             <Route
               path="upsell"
               element={
-                <UpsellCalls apiKey={`/api/agents/${userData.id}/users`} />
+                <UpsellCalls apiKey={`/api/agents/${userData?.id}/users`} />
               }
             />
             <Route path="tickets/:id" element={<TicketDetails />} />
