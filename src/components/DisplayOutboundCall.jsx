@@ -139,7 +139,15 @@ export default function DisplayOutboundCalls({
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {call.customerSatisfied ? "Interested" : "Not-Interested"}
+                      {call.callCategory === "satisfaction"
+                        ? call.customerSatisfied
+                          ? "Satisfied"
+                          : "Not-Satisfied"
+                        : call.callCategory === "upsell"
+                        ? call.customerSatisfied
+                          ? "Interested"
+                          : "Not-Interested"
+                        : "N/A"}
                     </span>
                   </td>
                 </tr>

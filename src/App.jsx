@@ -22,7 +22,6 @@ import {
 import TicketDetails from "./components/TicketDetails";
 import Calls from "./pages/admin/Calls";
 import CallDetails from "./components/CallsDetails";
-import AgentCalls from "./pages/agents/AgentInboundCalls";
 import AgentInboundCalls from "./pages/agents/AgentInboundCalls";
 import AgentOutboundCalls from "./pages/agents/AgentOutboundCalls";
 import UpsellCalls from "./pages/agents/UpsellCalls";
