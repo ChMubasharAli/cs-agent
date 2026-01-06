@@ -96,8 +96,8 @@ export default function Calls({ apiKey = "/api/calls", type = "" }) {
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Calls: {callsError.message}
+          <Text py={"md"} ta={"center"}>
+            No calls found.
           </Text>
         ) : !Array.isArray(calls) || calls.length === 0 ? (
           <Text py={"md"} ta={"center"}>

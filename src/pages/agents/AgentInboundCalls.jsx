@@ -136,8 +136,8 @@ export default function AgentInboundCalls() {
         {callsLoading ? (
           <LoaderComp />
         ) : callsError ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Calls: {callsError.message}
+          <Text py={"md"} ta={"center"}>
+            No calls found.
           </Text>
         ) : inboundCalls.length === 0 ? (
           <Text py={"md"} ta={"center"}>

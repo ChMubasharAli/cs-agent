@@ -137,12 +137,12 @@ export default function Users({ apiKey = "/api/users" }) {
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Users: {ticketFetchingError.message}
+          <Text py={"md"} ta={"center"}>
+            No user found against upsell call.
           </Text>
         ) : !Array.isArray(usersData) || usersData.length === 0 ? (
           <Text py={"md"} ta={"center"}>
-            No users found.
+            No user found against upsell call.
           </Text>
         ) : (
           <section className="h-full bg-white rounded-2xl p-2 flex flex-col shadow-lg">

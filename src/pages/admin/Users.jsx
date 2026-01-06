@@ -137,8 +137,8 @@ export default function Users({ apiKey = "/api/users" }) {
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Users: {ticketFetchingError.message}
+          <Text py={"md"} ta={"center"}>
+            No users found.
           </Text>
         ) : !Array.isArray(usersData) || usersData.length === 0 ? (
           <Text py={"md"} ta={"center"}>

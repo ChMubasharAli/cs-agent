@@ -111,14 +111,6 @@ export default function AgentDashboard() {
                     Welcome back! Here's your personal performance overview.
                   </p>
                 </div>
-                {dashboardData.scope && (
-                  <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
-                    <User className="w-5 h-5 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-800 capitalize">
-                      {dashboardData.scope.role} #{dashboardData.scope.agentId}
-                    </span>
-                  </div>
-                )}
               </div>
 
               {/* Stats Cards Grid - Removed Users card */}

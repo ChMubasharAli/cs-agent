@@ -190,8 +190,8 @@ export default function Tickets({
         {ticketFetchingLoading ? (
           <LoaderComp />
         ) : ticketFetchingError ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Tickets: {ticketFetchingError.message}
+          <Text py={"md"} ta={"center"}>
+            No tickets found.
           </Text>
         ) : !Array.isArray(ticketsData) || ticketsData.length === 0 ? (
           <Text py={"md"} ta={"center"}>
