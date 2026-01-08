@@ -6,6 +6,7 @@ import apiClient from "../api/axios";
 import LoaderComp from "./LoaderComp";
 import Audio from "./Audio";
 import CustomerSatisfactionToggler from "./CustomerSatisfactionToggler";
+import CreateRandomTicketButton from "./CreateRandomTicketButton";
 // import Audio from "../components/Audio";
 
 const CallDetails = () => {
@@ -99,26 +100,29 @@ const CallDetails = () => {
             <div className="lg:col-span-2   flex flex-col gap-10">
               {/* Conversation Transcript */}
               {call.QuestionsAnswers && call.QuestionsAnswers.length > 0 && (
-                <div className="space-y-4">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg
-                      className="w-5 h-5 text-green-600 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                      />
-                    </svg>
-                    Conversation Transcript
-                    <span className="ml-2 text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                      {call.QuestionsAnswers.length} exchanges
-                    </span>
-                  </h2>
+                <div className="space-y-4 ">
+                  <div className=" flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <svg
+                        className="w-5 h-5 text-green-600 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                        />
+                      </svg>
+                      Conversation Transcript
+                      <span className="ml-2 text-sm font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        {call.QuestionsAnswers.length} exchanges
+                      </span>
+                    </h2>
+                    <CreateRandomTicketButton userId={call?.userId?.id} />
+                  </div>
                   <div className="space-y-3 shadow-md p-2 rounded-md min-h-96 max-h-96 overflow-y-auto">
                     {call.QuestionsAnswers.map((qa, qaIndex) => (
                       <div key={qaIndex} className="space-y-2">

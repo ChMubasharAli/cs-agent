@@ -1,4 +1,4 @@
-import { Text } from "@mantine/core";
+import { Text, Button } from "@mantine/core"; // Added Button for better UX
 import { useQuery } from "@tanstack/react-query";
 import LoaderComp from "./LoaderComp";
 import apiClient from "../api/axios";
@@ -17,6 +17,35 @@ export default function Audio({ callId = "" }) {
     },
     enabled: !!callId,
   });
+
+  // The function to force download
+  const handleDownload = async (url, filename) => {
+    try {
+      // 1. Fetch the data as a blob
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      // 2. Create a local object URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // 3. Create a temporary anchor element
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename || "recording.mp3";
+
+      // 4. Append to body, click it, and remove it
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // 5. Clean up the memory
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed:", err);
+      // Fallback: Try opening in new tab if fetch fails
+      window.open(url, "_blank");
+    }
+  };
 
   return (
     <>
@@ -44,15 +73,17 @@ export default function Audio({ callId = "" }) {
               Your browser does not support the audio element.
             </audio>
 
-            {/* Download fallback */}
+            {/* Download Button */}
             <div className="mt-3 text-center">
-              <a
-                href={dashboardData.url}
-                download={`recording-${callId}.mp3`}
-                className="text-blue-600 hover:underline text-sm"
+              <button
+                type="button"
+                onClick={() =>
+                  handleDownload(dashboardData.url, `recording-${callId}.mp3`)
+                }
+                className="text-blue-600 hover:underline text-sm bg-transparent border-none cursor-pointer"
               >
                 Download Recording
-              </a>
+              </button>
             </div>
           </section>
         )}
