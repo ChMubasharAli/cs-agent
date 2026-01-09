@@ -14,7 +14,7 @@ import apiClient from "../api/axios";
 import { notifications } from "@mantine/notifications";
 import { RxCheck, RxCross2 } from "react-icons/rx";
 
-const CreateRandomTicketButton = ({ userId }) => {
+const CreateRandomTicketButton = ({ userId, callId }) => {
   // Modal state
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -27,6 +27,7 @@ const CreateRandomTicketButton = ({ userId }) => {
     proposedSolution: "",
     userId: userId,
     agentId: "",
+    callId: callId,
   });
 
   // Fetch agents
@@ -101,6 +102,10 @@ const CreateRandomTicketButton = ({ userId }) => {
     e.preventDefault();
     if (!formData.agentId) {
       alert("Please select an agent");
+      return;
+    }
+    if (!formData.callId) {
+      alert("call is not valied");
       return;
     }
     createTicketMutation.mutate(formData);

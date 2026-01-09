@@ -121,7 +121,10 @@ const CallDetails = () => {
                         {call.QuestionsAnswers.length} exchanges
                       </span>
                     </h2>
-                    <CreateRandomTicketButton userId={call?.userId?.id} />
+                    <CreateRandomTicketButton
+                      userId={call?.userId?.id}
+                      callId={call.id}
+                    />
                   </div>
                   <div className="space-y-3 shadow-md p-2 rounded-md min-h-96 max-h-96 overflow-y-auto">
                     {call.QuestionsAnswers.map((qa, qaIndex) => (

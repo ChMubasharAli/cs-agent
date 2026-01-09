@@ -53,8 +53,8 @@ export default function Audio({ callId = "" }) {
         {isLoading ? (
           <LoaderComp />
         ) : error ? (
-          <Text py={"md"} ta={"center"} c={"red"}>
-            Failed to load Recording: {error.message}
+          <Text py={"md"} ta={"center"}>
+            No Recording found.
           </Text>
         ) : !dashboardData ? (
           <Text py={"md"} ta={"center"}>
